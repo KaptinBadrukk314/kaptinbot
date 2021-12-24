@@ -144,6 +144,17 @@ module.exports = {
          } else {
             await interaction.reply({content:'There is nothing to vote for.', ephemeral: true})
          }
+      }else if(interaction.options.getSubcommand() === 'withdraw'){
+         let userRemove = await User.findOne({
+            where:{
+               discordUsername:{
+                  [Op.eq]: collected.user.username
+               }
+            }
+         });
+         userRemove.destroy();
+         userRemove.save();
+         await interaction.reply({content: 'You have withdrawn from the punishment wheel.', ephemeral: true})
       }
    },
 };
