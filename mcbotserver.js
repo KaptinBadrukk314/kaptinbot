@@ -5,7 +5,6 @@ const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 const wait = require('util').promisify(setTimeout);
 const { Sequelize, DataTypes, Op } = require('sequelize');
-//const perm = require('./permission.js');
 
 const guildId = process.env.GUILD_ID;
 const potterBook1 = [];
@@ -177,9 +176,6 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       let arr = message.trim().split(" ");
       let user = arr.filter(trickHelper);
       let num = Math.floor(Math.random() * 2);
-      console.log(user);
-      console.log(arr);
-      console.log(num);
       if (num == 1){//treat
          clientTwitch.say(channel, `${userstate['username']} gave a treat to ${user}`);
       }else{
@@ -201,43 +197,19 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
             }
          }
       });
-      //// TODO: no whisper allowed.
-      // FIXME: redirect to discord for signup to use punishment
-      switch(userstate["message-type"]) {
-           case "chat":
-               if(temp.twitchUsername && temp.discordUsername){
-                  clientTwitch.say(channel, `${userstate['username']}, you are all set with the punishment wheel.`);
-               }else{
-                  var newUser = {};
-                  if(!temp.twitchUsername){
-                     newUser = User.build({
-                        twitchUsername: userstate['username']
-                     })
-                  }
-                  await newUser.save();
-                  clientTwitch.say(channel, `${userstate['username']} please reply to the whisper as instructed.`);
-                  clientTwitch.whisper(userstate['username'], `${userstate['username']} please respond to this whisper with the command "!punish agree <discorduserid>" where <discorduserid> is replaced with your discord user id.`);
-               }
-               break;
-           case "whisper":
-               if(temp.twitchUsername && temp.discordUsername){
-                  clientTwitch.whisper(userstate['username'], `${userstate['username']}, you are all set with the punishment wheel.`);
-               }else{
-                  var whisperMsgArr = message.trim().split(" ");
-                  var discordId = whisperMsgArr[2];
-                  discordtemp = clientDiscord.Guilds.fetch().members.fetch(discordId);
-                  if(discordtemp){
-                     temp.discordUsername = discordtemp.name;
-                  }else{
-                     clientTwitch.whisper(userstate['username'], `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
-                  }
-               }
-               await temp.save();
-               break;
-           default:
-               clientTwitch.say(channel, "I don't know what happened to be honest...")
-               break;
-         }
+      if(temp.twitchUsername && temp.discordUsername){
+        clientTwitch.whisper(userstate['username'], `${userstate['username']}, you are all set with the punishment wheel.`);
+      }else{
+        var whisperMsgArr = message.trim().split(" ");
+        var discordId = whisperMsgArr[2];
+        discordtemp = clientDiscord.Guilds.fetch().members.fetch(discordId);
+        if(discordtemp){
+           temp.discordUsername = discordtemp.name;
+        }else{
+           clientTwitch.whisper(userstate['username'], `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
+        }
+      }
+      await temp.save();
    }
 });
 
