@@ -186,11 +186,29 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
      clientTwitch.say(channel, `${userstate['username']}\'s Harry Potter Quote: ${generateHPQuote()}`);
    }
    if (commandName.startsWith('!spin') || commandName.startsWith('!punish')){
-      //// TODO: Update to use new db
-      //clientTwitch.say(channel, `${user} has to endure ${punishment}`);
+      let check = User.findOne({
+         where: {
+            twitchUsername:{
+               [Op.eq]: userstate['username']
+            }
+         }
+      });
+      if(!check.twitchUsername){
+        clientTwitch.say(channel, `${userstate['username']}, you must be signed up for the punishment wheel in order to spin.`);
+        return;
+      }
+      let users = User.findAll();
+      let punishments = Punishment.findAll();
+      if(punishments.length == 0){
+        clientTwitch.say(channel, `There are no punishments currently active. Please go to the discord and vote for the punishments you would like to be active.`);
+        return;
+      }
+      let user = Math.floor(Math.random() * users.length);
+      let punishment = Math.floor(Math.random() * punishments.length);
+      clientTwitch.say(channel, `${user} has to endure ${punishment}`);
    }
    if (commandName.startsWith('!punish agree')){
-      var temp = User.findOne({
+      let temp = User.findOne({
          where: {
             twitchUsername:{
                [Op.eq]: userstate['username']
@@ -200,8 +218,8 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       if(temp.twitchUsername && temp.discordUsername){
         clientTwitch.whisper(userstate['username'], `${userstate['username']}, you are all set with the punishment wheel.`);
       }else{
-        var whisperMsgArr = message.trim().split(" ");
-        var discordId = whisperMsgArr[2];
+        let msgArr = message.trim().split(" ");
+        let discordId = msgArr[2];
         discordtemp = clientDiscord.Guilds.fetch().members.fetch(discordId);
         if(discordtemp){
            temp.discordUsername = discordtemp.name;
