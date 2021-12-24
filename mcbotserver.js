@@ -186,7 +186,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
      clientTwitch.say(channel, `${userstate['username']}\'s Harry Potter Quote: ${generateHPQuote()}`);
    }
    if (commandName.startsWith('!spin') || commandName.startsWith('!punish')){
-      let check = User.findOne({
+      let check = await User.findOne({
          where: {
             twitchUsername:{
                [Op.eq]: userstate['username']
@@ -208,7 +208,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       clientTwitch.say(channel, `${user} has to endure ${punishment}`);
    }
    if (commandName.startsWith('!punish agree')){
-      let temp = User.findOne({
+      let temp = await User.findOne({
          where: {
             twitchUsername:{
                [Op.eq]: userstate['username']
@@ -216,7 +216,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
          }
       });
       if(temp.twitchUsername && temp.discordUsername){
-        clientTwitch.whisper(userstate['username'], `${userstate['username']}, you are all set with the punishment wheel.`);
+        clientTwitch.say(channel, `${userstate['username']}, you are all set with the punishment wheel.`);
       }else{
         let msgArr = message.trim().split(" ");
         let discordId = msgArr[2];
@@ -224,10 +224,26 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
         if(discordtemp){
            temp.discordUsername = discordtemp.name;
         }else{
-           clientTwitch.whisper(userstate['username'], `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
+           clientTwitch.say(channel, `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
         }
       }
       await temp.save();
+   }
+   if(commandName.startsWith('!punish withdraw')){
+     let temp = await User.findOne({
+        where: {
+           twitchUsername:{
+              [Op.eq]: userstate['username']
+           }
+        }
+     });
+     if(temp.twitchUsername){
+        await temp.destroy();
+        await temp.save();
+        clientTwitch.say(channel, `${userstate['username']}, you have withdrawn from the punishment wheel.`);
+     }else{
+       clientTwitch.say(channel, `${userstate['username']}, you are not signed up for the punishment wheel.`);
+     }
    }
 });
 
