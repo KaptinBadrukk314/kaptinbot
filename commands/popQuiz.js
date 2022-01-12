@@ -21,12 +21,20 @@ module.exports = {
          const quizObj = JSON.parse(quiz);
          const topic = interaction.options.getString('topic');
          const questions;
-         if(topic){
-            //get questions from specified topic
-            quizObj.topics.get(topic)
-         } else {
-            //get questions from random topic
+         const topicsarr = quizObj.topics;
+         questions = await getQuestions(topicsarr, topic);
+      }
+   }
+};
+
+async function getQuestions(topicsarr, topic){
+   if(topic){
+      for (const element in topicsarr){
+         if(element.name === topic){
+            return element.questions;
          }
       }
+   }else{
+      return topicsarr[(Math.random() * topicsarr.length)].questions;
    }
 }

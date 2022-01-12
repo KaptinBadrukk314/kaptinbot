@@ -2,48 +2,40 @@
    {
       "topics": [
          {
-            "geometry":
-            {
-               "questions":[
-                  {
-                     "question":""
-                     "answers":[]
-                  }
-               ]
-            }
+            "name": "geometry",
+            "questions":[
+               {
+                  "question":"",
+                  "answers":[]
+               }
+            ]
          },
          {
-            "harry potter":
-            {
-               "questions":[
-                  {
-                     "question":""
-                     "answers":[]
-                  }
-               ]
-            }
+            "name": "harry potter",
+            "questions":[
+               {
+                  "question":"",
+                  "answers":[]
+               }
+            ]
          },
          {
-            "pokemon":
-            {
-               "questions":[
-                  {
-                     "question":""
-                     "answers":[]
-                  }
-               ]
-            }
+            "name": "pokemon",
+            "questions":[
+               {
+                  "question":"",
+                  "answers":[]
+               }
+            ]
          },
          {
-            "star wars":
-            {
-               "questions":[
-                  {
-                     "question":""
-                     "answers":[]
-                  }
-               ]
-            }
+            "name": "star wars",
+            "questions":[
+               {
+                  "question":"",
+                  "answers":[]
+               }
+            ]
          },
       ]
    }
