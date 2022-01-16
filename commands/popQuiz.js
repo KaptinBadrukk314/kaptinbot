@@ -6,28 +6,27 @@ const quiz = require('./quiz.json');
 module.exports = {
 	data: new SlashCommandBuilder()
       .setName('popQuiz')
-      .setDescription('Pop quiz on a random topic');
-      .addSubcommand( subcommand =>
-         subcommand
-            .setName('start')
-            .setDescription('Starts a pop quiz queue')
-            .addStringOption(option =>
-               option
-                  .setName('topic')
-                  .setDescription('Specify the topic for the pop quiz')
-                  .setRequired(false)))
+      .setDescription('Pop quiz on a random topic. First to answer correctly wins.');
+      .addStringOption(option =>
+         option
+            .setName('topic')
+            .setDescription('Specify the topic for the pop quiz')
+            .setRequired(false)))
    async execute(interaction){
-      if(interaction.options.getSubcommand() === 'start'){
          const quizObj = JSON.parse(quiz);
          const topic = interaction.options.getString('topic');
          const questions;
          const topicsarr = quizObj.topics;
-         questions = await getQuestions(topicsarr, topic);
-      }
+         questions = getQuestions(topicsarr, topic);
+         const randomQ = (Math.random() * questions.length)
+         const question = questions[randomQ].question;
+         const answers = questions[randomQ].answers;
+         interaction.reply({content: `Question is ${question}`, ephemeral: false});
+
    }
 };
 
-async function getQuestions(topicsarr, topic){
+function getQuestions(topicsarr, topic){
    if(topic){
       for (const element in topicsarr){
          if(element.name === topic){
