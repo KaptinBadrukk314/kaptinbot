@@ -19,18 +19,18 @@ module.exports = {
             .setRequired(false)),
    async execute(interaction){
          const quizObj = JSON.parse(quiz);
-         const topic = interaction.options.getString('topic');
-         const time = interaction.options.getInteger('time')
-         const topicsarr = quizObj.topics;
-         const questions = getQuestions(topicsarr, topic);
-         const item = questions[(Math.random() * questions.length)];
+         quizObj.topic = interaction.options.getString('topic');
+         quizObj.time = interaction.options.getInteger('time')
+         quizObj.topicsarr = quizObj.topics;
+         quizObj.questions = getQuestions(quizObj.topicsarr, quizObj.topic);
+         const item = quizObj.questions[(Math.random() * quizObj.questions.length)];
          const filter = response => {
-         	return answers.some(item.answer => answer.toLowerCase() === response.content.toLowerCase());
+         	return item.answers.some(item.answers => item.answers.toLowerCase() === response.content.toLowerCase());
          };
 
          interaction.reply(item.question, { fetchReply: true })
          	.then(() => {
-         		interaction.channel.awaitMessages({ filter, max: 1, time: time, errors: ['time'] })
+         		interaction.channel.awaitMessages({ filter, max: 1, time: quizObj.time, errors: ['time'] })
          			.then(collected => {
          				interaction.followUp(`${collected.first().author} got the correct answer!`);
          			})
