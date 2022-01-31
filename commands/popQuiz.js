@@ -16,7 +16,7 @@ module.exports = {
          option
             .setName('topic')
             .setDescription('Specify the topic for the pop quiz')
-            .setRequired(false))
+            .setRequired(false)),
    async execute(interaction){
          const quizObj = JSON.parse(quiz);
          const topic = interaction.options.getString('topic');
