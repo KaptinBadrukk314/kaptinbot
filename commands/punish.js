@@ -37,8 +37,7 @@ module.exports = {
       .addSubcommand( subcommand=>
          subcommand
             .setName('withdraw'))
-            .setDescription('Withdraw from the Punishment Wheel')
-      ,
+            .setDescription('Withdraw from the Punishment Wheel')),
    async execute(interaction, Vote, User, Punishment) {
       if (interaction.options.getSubcommand() === 'agree'){
          let temp = await User.findOne({
