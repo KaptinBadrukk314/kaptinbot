@@ -1,24 +1,16 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const { Sequelize, DataTypes, Op } = require('sequelize');
-const { Client, MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
-const fs = require('fs');
-
 describe("mod suite", function(){
-  spyOn(SlashCommandBuilder, "setName");
-  spyOn(SlashCommandBuilder, "setDescription");
-  spyOn(SlashCommandBuilder, "addSubcommand");
-  spyOn(SlashCommandBuilder, "addStringOption");
-  spyOn(SlashCommandBuilder, "setRequired");
-  spyOn(SlashCommandBuilder, "setDefaultPermission");
+
+  const { Sequelize, DataTypes, Op } = require('sequelize');
+  const { Client, Intents, MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
+  const fs = require('fs');
+  let SlashCommandBuilder = jasmine.createSpyObj('SlashCommandBuilder',['setName','setDescription','addSubcommand','addStringOption','setRequired','setDefaultPermission'])
+
 
   beforeEach(function(){
     const clientDiscord = new Client({ intents: [Intents.FLAGS.GUILDS] });
     const file = require('../commands/mod.js');
   });
   describe("setup", function(){
-    beforeEach(function(){
-
-    });
     it("should call setName with parameter mod", function(){
       expect(SlashCommandBuilder.setName).toHaveBeenCalledWith('mod');
     });
@@ -26,8 +18,8 @@ describe("mod suite", function(){
       expect(SlashCommandBuilder.setDescription).toHaveBeenCalled();
     });
     describe("subcommand", function(){
-      it("should call setSubcommand", function(){
-        expect(SlashCommandBuilder.setSubcommand).toHaveBeenCalled();
+      it("should call addSubcommand", function(){
+        expect(SlashCommandBuilder.addSubcommand).toHaveBeenCalled();
       });
       it("should call setName with parameter remove", function(){
         expect(SlashCommandBuilder.setName).toHaveBeenCalledWith('name');
