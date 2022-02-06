@@ -136,10 +136,12 @@ module.exports = {
                         }
                      });
                      punishId.voteCount += 1;
-                     let users = await User.findAll();
-                     let userCount = users.length;
-                     if(punishId.voteCount >= userCount/2){
-                        punishId.activeFlg = true;
+                     if(!punishId.modActivate){
+                        let users = await User.findAll();
+                        let userCount = users.length;
+                        if(punishId.voteCount >= userCount/2){
+                           punishId.activeFlg = true;
+                        }
                      }
                      await punishId.save();
                      await newVote.save();
