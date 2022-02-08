@@ -5,6 +5,7 @@ const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 const wait = require('util').promisify(setTimeout);
 const { Sequelize, DataTypes, Op } = require('sequelize');
+//const perm = require('./permission.js');
 
 const guildId = process.env.GUILD_ID;
 const potterBook1 = [];
@@ -74,14 +75,6 @@ const Punishment = db.define('Punishment', {
       defaultValue: false,
       set(value){
         this.setDataValue('activeFlg', value);
-      }
-   },
-   modActivate:{
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-      set(value){
-         this.setDataValue('modActivate', value);
       }
    }
 });
@@ -184,6 +177,9 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       let arr = message.trim().split(" ");
       let user = arr.filter(trickHelper);
       let num = Math.floor(Math.random() * 2);
+      console.log(user);
+      console.log(arr);
+      console.log(num);
       if (num == 1){//treat
          clientTwitch.say(channel, `${userstate['username']} gave a treat to ${user}`);
       }else{
@@ -194,64 +190,54 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
      clientTwitch.say(channel, `${userstate['username']}\'s Harry Potter Quote: ${generateHPQuote()}`);
    }
    if (commandName.startsWith('!spin') || commandName.startsWith('!punish')){
-      let check = await User.findOne({
-         where: {
-            twitchUsername:{
-               [Op.eq]: userstate['username']
-            }
-         }
-      });
-      if(!check.twitchUsername){
-        clientTwitch.say(channel, `${userstate['username']}, you must be signed up for the punishment wheel in order to spin.`);
-        return;
-      }
-      let users = User.findAll();
-      let punishments = Punishment.findAll();
-      if(punishments.length == 0){
-        clientTwitch.say(channel, `There are no punishments currently active. Please go to the discord and vote for the punishments you would like to be active.`);
-        return;
-      }
-      let user = Math.floor(Math.random() * users.length);
-      let punishment = Math.floor(Math.random() * punishments.length);
-      clientTwitch.say(channel, `${user} has to endure ${punishment}`);
+      //// TODO: Update to use new db
+      //clientTwitch.say(channel, `${user} has to endure ${punishment}`);
    }
    if (commandName.startsWith('!punish agree')){
-      let temp = await User.findOne({
+      var temp = User.findOne({
          where: {
             twitchUsername:{
                [Op.eq]: userstate['username']
             }
          }
       });
-      if(temp.twitchUsername && temp.discordUsername){
-        clientTwitch.say(channel, `${userstate['username']}, you are all set with the punishment wheel.`);
-      }else{
-        let msgArr = message.trim().split(" ");
-        let discordId = msgArr[2];
-        discordtemp = clientDiscord.Guilds.fetch().members.fetch(discordId);
-        if(discordtemp){
-           temp.discordUsername = discordtemp.name;
-        }else{
-           clientTwitch.say(channel, `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
-        }
-      }
-      await temp.save();
-   }
-   if(commandName.startsWith('!punish withdraw')){
-     let temp = await User.findOne({
-        where: {
-           twitchUsername:{
-              [Op.eq]: userstate['username']
-           }
-        }
-     });
-     if(temp.twitchUsername){
-        await temp.destroy();
-        await temp.save();
-        clientTwitch.say(channel, `${userstate['username']}, you have withdrawn from the punishment wheel.`);
-     }else{
-       clientTwitch.say(channel, `${userstate['username']}, you are not signed up for the punishment wheel.`);
-     }
+      //// TODO: no whisper allowed.
+      // FIXME: redirect to discord for signup to use punishment
+      switch(userstate["message-type"]) {
+           case "chat":
+               if(temp.twitchUsername && temp.discordUsername){
+                  clientTwitch.say(channel, `${userstate['username']}, you are all set with the punishment wheel.`);
+               }else{
+                  var newUser = {};
+                  if(!temp.twitchUsername){
+                     newUser = User.build({
+                        twitchUsername: userstate['username']
+                     })
+                  }
+                  await newUser.save();
+                  clientTwitch.say(channel, `${userstate['username']} please reply to the whisper as instructed.`);
+                  clientTwitch.whisper(userstate['username'], `${userstate['username']} please respond to this whisper with the command "!punish agree <discorduserid>" where <discorduserid> is replaced with your discord user id.`);
+               }
+               break;
+           case "whisper":
+               if(temp.twitchUsername && temp.discordUsername){
+                  clientTwitch.whisper(userstate['username'], `${userstate['username']}, you are all set with the punishment wheel.`);
+               }else{
+                  var whisperMsgArr = message.trim().split(" ");
+                  var discordId = whisperMsgArr[2];
+                  discordtemp = clientDiscord.Guilds.fetch().members.fetch(discordId);
+                  if(discordtemp){
+                     temp.discordUsername = discordtemp.name;
+                  }else{
+                     clientTwitch.whisper(userstate['username'], `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
+                  }
+               }
+               await temp.save();
+               break;
+           default:
+               clientTwitch.say(channel, "I don't know what happened to be honest...")
+               break;
+         }
    }
 });
 
