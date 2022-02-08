@@ -75,6 +75,14 @@ const Punishment = db.define('Punishment', {
       set(value){
         this.setDataValue('activeFlg', value);
       }
+   },
+   modActivate:{
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      set(value){
+         this.setDataValue('modActivate', value);
+      }
    }
 });
 

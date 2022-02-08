@@ -73,9 +73,9 @@ module.exports = {
          await interaction.reply({content:'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true})
       } else if(interaction.options.getSubcommand() === 'view'){
          const temp = await Punishment.findAll();
-         let punishments = "Name---Description---Vote Count---Active\n";
+         let punishments = "Name---Description---Vote Count---Actived---ModActivated\n";
          temp.forEach((item) => {
-            const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}\n`
+            const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}---${item.modActivate}\n`
             punishments = punishments.concat(temp2);
          });
          let embed = new MessageEmbed()
@@ -135,6 +135,13 @@ module.exports = {
                         }
                      });
                      punishId.voteCount += 1;
+                     if(!punishId.modActivate){
+                        let users = await User.findAll();
+                        let userCount = users.length;
+                        if(punishId.voteCount >= userCount/2){
+                           punishId.activeFlg = true;
+                        }
+                     }
                      await punishId.save();
                      await newVote.save();
                   } catch(err){
