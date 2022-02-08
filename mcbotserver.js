@@ -7,7 +7,7 @@ const wait = require('util').promisify(setTimeout);
 const { Sequelize, DataTypes, Op } = require('sequelize');
 
 const guildId = process.env.GUILD_ID;
-const potterBook1 = [];
+var potterBook1 = [];
 
 const db = new Sequelize({
    dialect: 'sqlite',
@@ -160,7 +160,7 @@ clientDiscord.on('interactionCreate', async interaction =>{
 	if (!command) return;
 
 	try {
-      if(interaction.commandName === 'punish'){
+      if(interaction.commandName === 'punish' || interaction.commandName === 'mod'){
          await command.execute(interaction, Vote, User, Punishment);
       } else {
          await command.execute(interaction);
@@ -185,46 +185,53 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       let user = arr.filter(trickHelper);
       let num = Math.floor(Math.random() * 2);
       if (num == 1){//treat
-         clientTwitch.say(channel, `${userstate['username']} gave a treat to ${user}`);
+         clientTwitch.say(channel, `${userstate['display-name']} gave a treat to ${user}`);
       }else{
-         clientTwitch.say(channel, `${userstate['username']} tricked ${user}`);
+         clientTwitch.say(channel, `${userstate['display-name']} tricked ${user}`);
       }
    }
    if(commandName === '!NoContextHP' || commandName === '!nocontexthp' || commandName === '!nchp' || commandName === '!NCHP'){
-     clientTwitch.say(channel, `${userstate['username']}\'s Harry Potter Quote: ${generateHPQuote()}`);
+     clientTwitch.say(channel, `${userstate['display-name']}\'s Harry Potter Quote: ${generateHPQuote()}`);
    }
    if (commandName.startsWith('!spin') || commandName.startsWith('!punish')){
       let check = await User.findOne({
          where: {
             twitchUsername:{
-               [Op.eq]: userstate['username']
+               [Op.eq]: userstate['display-name']
             }
          }
       });
-      if(!check.twitchUsername){
-        clientTwitch.say(channel, `${userstate['username']}, you must be signed up for the punishment wheel in order to spin.`);
+      console.log(check);
+      console.log(userstate);
+      if(!check || !check.twitchUsername){
+        clientTwitch.say(channel, `${userstate['display-name']}, you must be signed up for the punishment wheel in order to spin.`);
         return;
       }
-      let users = User.findAll();
-      let punishments = Punishment.findAll();
+      let users = await User.findAll();
+      let punishments = await Punishment.findAll();
       if(punishments.length == 0){
         clientTwitch.say(channel, `There are no punishments currently active. Please go to the discord and vote for the punishments you would like to be active.`);
         return;
       }
-      let user = Math.floor(Math.random() * users.length);
-      let punishment = Math.floor(Math.random() * punishments.length);
+
+      let user = users[Math.floor(Math.random() * users.length)].twitchUsername;
+      let punishment = punishments[Math.floor(Math.random() * punishments.length)].description;
+      console.log(users);
+      console.log(punishments);
+      console.log(user);
+      console.log(punishment);
       clientTwitch.say(channel, `${user} has to endure ${punishment}`);
    }
    if (commandName.startsWith('!punish agree')){
       let temp = await User.findOne({
          where: {
             twitchUsername:{
-               [Op.eq]: userstate['username']
+               [Op.eq]: userstate['display-name']
             }
          }
       });
       if(temp.twitchUsername && temp.discordUsername){
-        clientTwitch.say(channel, `${userstate['username']}, you are all set with the punishment wheel.`);
+        clientTwitch.say(channel, `${userstate['display-name']}, you are all set with the punishment wheel.`);
       }else{
         let msgArr = message.trim().split(" ");
         let discordId = msgArr[2];
@@ -232,7 +239,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
         if(discordtemp){
            temp.discordUsername = discordtemp.name;
         }else{
-           clientTwitch.say(channel, `${userstate['username']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
+           clientTwitch.say(channel, `${userstate['display-name']}, you must join the discord server first. https://discord.gg/qga8pANUEF then try the command again. It may take up to 1 hour before I see the discord update to show you as a member so please be patient.`);
         }
       }
       await temp.save();
@@ -241,16 +248,16 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
      let temp = await User.findOne({
         where: {
            twitchUsername:{
-              [Op.eq]: userstate['username']
+              [Op.eq]: userstate['display-name']
            }
         }
      });
      if(temp.twitchUsername){
         await temp.destroy();
         await temp.save();
-        clientTwitch.say(channel, `${userstate['username']}, you have withdrawn from the punishment wheel.`);
+        clientTwitch.say(channel, `${userstate['display-name']}, you have withdrawn from the punishment wheel.`);
      }else{
-       clientTwitch.say(channel, `${userstate['username']}, you are not signed up for the punishment wheel.`);
+       clientTwitch.say(channel, `${userstate['display-name']}, you are not signed up for the punishment wheel.`);
      }
    }
 });

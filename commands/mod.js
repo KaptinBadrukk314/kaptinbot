@@ -16,8 +16,8 @@ module.exports = {
                .setRequired(true)))
       .addSubcommand( subcommand =>
          subcommand
-            .setName('activeToggle')
-            .setDescription('Toggle active status of a punishment. (Mod/Admin only) Forces toggle of punishment.');
+            .setName('activetoggle')
+            .setDescription('Toggle active status of a punishment. (Mod/Admin only) Forces toggle of punishment.')
             .addStringOption(option =>
                option.setName('name')
                .setDescription('Name of punishment to Activate.')
@@ -34,11 +34,11 @@ module.exports = {
             if(temp){
                await temp.destroy();
                await temp.save();
-               await interaction.reply(`${interaction.userstate['username']} has removed ${beRemoved} from the Punishments.`);
+               await interaction.reply(`${interaction.user.username} has removed ${beRemoved} from the Punishments.`);
             }else{
                await interaction.reply(`${beRemoved} does not exist in Punishments.`);
             }
-         } else if(interaction.options.getSubcommand() === 'activeToggle'){
+         } else if(interaction.options.getSubcommand() === 'activetoggle'){
             const beActivated = interaction.options.getString('name');
             let temp = await Punishment.findOne({
                where:{
@@ -48,9 +48,9 @@ module.exports = {
             if(temp){
                temp.modActivate = !temp.modActivate;
                await temp.save();
-               await interaction.reply(`${interaction.userstate['username']} has toggled ${beActivated} in Punishments.`);
+               await interaction.reply(`${interaction.user.username} has toggled ${beActivated} in Punishments.`);
             }else{
-               await interaction.reply(`${beRemoved} does not exist in Punishments.`);
+               await interaction.reply(`${beActivated} does not exist in Punishments.`);
             }
          }
       }

@@ -36,7 +36,7 @@ module.exports = {
             .setDescription('Select the punishments you would like to see on the wheel'))
       .addSubcommand( subcommand=>
          subcommand
-            .setName('withdraw'))
+            .setName('withdraw')
             .setDescription('Withdraw from the Punishment Wheel')),
    async execute(interaction, Vote, User, Punishment) {
       if (interaction.options.getSubcommand() === 'agree'){
@@ -50,10 +50,11 @@ module.exports = {
          if(!temp){
             temp = await User.build({discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername')});
          }else if(temp.discordUsername && temp.twitchUsername){
-            interaction.reply({content: 'You are all set to participate in the punishment wheel.', ephemeral: true});
+            await interaction.reply({content: 'You are all set to participate in the punishment wheel.', ephemeral: true});
          }else{
             temp.twitchUsername = interaction.options.getString('twitchusername');
          }
+         console.log(temp);
          await temp.save();
          await interaction.reply({content:'Thank you for signing up for punishment.', ephemeral: true});
       }else if(interaction.options.getSubcommand() === 'add'){
@@ -158,12 +159,12 @@ module.exports = {
          let userRemove = await User.findOne({
             where:{
                discordUsername:{
-                  [Op.eq]: collected.user.username
+                  [Op.eq]: interaction.user.username
                }
             }
          });
-         userRemove.destroy();
-         userRemove.save();
+         await userRemove.destroy();
+         await userRemove.save();
          await interaction.reply({content: 'You have withdrawn from the punishment wheel.', ephemeral: true})
       }
    },
