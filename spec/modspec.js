@@ -1,17 +1,18 @@
 describe("mod suite", function(){
 
-  const { Sequelize, DataTypes, Op } = require('sequelize');
+  const SequelizeMock = require('sequelize-mock');
   const { Client, Intents, MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
   const fs = require('fs');
+  let dbMock = new SequelizeMock();
 
   //test connection
-  const db = new Sequelize({
+  const dbMock = new Sequelize({
      dialect: 'sqlite',
      storage: 'test.sqlite'
   });
 
-  //create or alter db tables
-  const Topic = db.define('Topic', {
+  //create or alter dbMock tables
+  var TopicMock = dbMock.define('Topic', {
      id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -25,7 +26,7 @@ describe("mod suite", function(){
      }
   });
 
-  const Punishment = db.define('Punishment', {
+  var PunishmentMock = dbMock.define('Punishment', {
      id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -56,7 +57,7 @@ describe("mod suite", function(){
      }
   });
 
-  const User = db.define('User', {
+  var UserMock = dbMock.define('User', {
      id: {
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -76,7 +77,7 @@ describe("mod suite", function(){
      }
   });
 
-  const Vote = db.define('Vote', {
+  var VoteMock = dbMock.define('Vote', {
      id:{
         type: DataTypes.UUID,
         defaultValue: Sequelize.UUIDV4,
@@ -85,12 +86,12 @@ describe("mod suite", function(){
      }
   });
 
-  Vote.belongsTo(User);
-  Vote.belongsTo(Punishment);
+  VoteMock.belongsTo(UserMock);
+  VoteMock.belongsTo(PunishmentMock);
 
   //sync database
   (async () =>{
-     await db.sync();
+     await dbMock.sync();
   })();
 
   let SlashCommandBuilder = jasmine.createSpyObj('SlashCommandBuilder',['setName','setDescription','addSubcommand','addStringOption','setRequired','setDefaultPermission'])
@@ -168,6 +169,7 @@ describe("mod suite", function(){
       expect(interaction.options.getSubcommand).toHaveBeenCalled();
     });
     it("should call findOne", async function(){
+      spyOn(Punishment);
       let punish = spyOn(Punishment, 'findOne');
       const file = require('../commands/mod.js');
       const data = await file.execute(interaction, User, Vote, punish);
