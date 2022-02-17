@@ -142,9 +142,7 @@ describe("mod suite", function(){
   });
   describe("execute", function(){
     let interaction = {};
-    let punish = {};
-    beforeEach(function(){
-      punish = jasmine.createSpyObj('punish',['destroy', 'save']);
+    beforeEach(async function(){
       interaction = {
         options:{
           getSubcommand: function(){
@@ -161,21 +159,23 @@ describe("mod suite", function(){
       spyOn(interaction.options, 'getSubcommand');
       spyOn(interaction.options, 'getString');
       spyOn(interaction, 'reply');
-      spyOn(Punishment, 'findOne').and.callFake(()=>{
-        return punish;
-      });
-      const file = require('../commands/mod.js');
-      const data = file.execute(interaction, User, Vote, Punishment);
+
     });
-    it("should call getSubcommand", function(){
+    it("should call getSubcommand", async function(){
+      const file = require('../commands/mod.js');
+      const data = await file.execute(interaction, User, Vote, Punishment);
+      console.log(data);
       expect(interaction.options.getSubcommand).toHaveBeenCalled();
     });
-    it("should call findOne", function(){
-      expect(Punishment.findOne).toHaveBeenCalled();
+    it("should call findOne", async function(){
+      let punish = spyOn(Punishment, 'findOne');
+      const file = require('../commands/mod.js');
+      const data = await file.execute(interaction, User, Vote, punish);
+      console.log(data);
+      expect(punish).toHaveBeenCalled();
     });
     it("should call destroy and save to delete the punishment", function(){
-      expect(punish.destroy).toHaveBeenCalled();
-      expect(punish.save).toHaveBeenCalled();
+
     });
   });
 });
