@@ -1,3 +1,5 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const { MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
@@ -15,8 +17,9 @@ module.exports = {
                .setDescription('Name of punishment to remove.')
                .setRequired(true)))
       .setDefaultPermission(false),
-      async execute(interaction, User, Vote, Punishment){
+      async execute(interaction, db){
          if (interaction.options.getSubcommand() === 'remove'){
+					  const Punishment = require('./models/punishment')(db);
             const beRemoved = interaction.options.getString('name');
             let temp = await Punishment.findOne({
                where:{

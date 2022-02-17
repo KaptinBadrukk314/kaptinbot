@@ -1,3 +1,5 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } = require('discord.js');
@@ -35,7 +37,7 @@ module.exports = {
             .setName('vote')
             .setDescription('Select the punishments you would like to see on the wheel'))
       ,
-   async execute(interaction, Vote, User, Punishment) {
+   async execute(interaction, db) {
       if (interaction.options.getSubcommand() === 'agree'){
          let temp = await User.findOne({
             where: {

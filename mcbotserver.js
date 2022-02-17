@@ -1,10 +1,12 @@
+"use strict";
+
 const tmi = require('tmi.js');
 const fs = require('fs');
 require('dotenv').config();
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('./config.json');
 const wait = require('util').promisify(setTimeout);
-const { Sequelize, DataTypes, Op } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 //const perm = require('./permission.js');
 
 const guildId = process.env.GUILD_ID;
@@ -15,15 +17,10 @@ const db = new Sequelize({
    storage: 'mcdata.sqlite'
 });
 
-const opts = {
-   identity: {
-      username: process.env.BOTNAME,
-      password: process.env.PASS
-   },
-   channels:[
-      process.env.CHANNELS
-   ]
-}
+const User = require('./models/user')(db);
+const Punishment = require('./models/punishment')(db);
+const Topic = require('./models/topic')(db);
+const Vote = require('./models/vote')(db);
 
 try {
   db.authenticate();
@@ -33,88 +30,20 @@ try {
   return;
 }
 
-//create or alter db tables
-const Topic = db.define('Topic', {
-   id: {
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false,
-      primaryKey: true
-   },
-   name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-   }
-});
-
-const Punishment = db.define('Punishment', {
-   id: {
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false,
-      primaryKey: true
-   },
-   name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
-   },
-   description: {
-      type: DataTypes.STRING,
-      allowNull: false
-   },
-   voteCount: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-   },
-   activeFlg:{
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-      set(value){
-        this.setDataValue('activeFlg', value);
-      }
-   }
-});
-
-const User = db.define('User', {
-   id: {
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false,
-      primaryKey: true
-   },
-   discordUsername:{
-      type: DataTypes.STRING,
-      allowNull: true
-   },
-   twitchUsername:{
-      type: DataTypes.STRING,
-      allowNull: true,
-      set(value){
-         this.setDataValue('twitchUsername', value);
-      }
-   }
-});
-
-const Vote = db.define('Vote', {
-   id:{
-      type: DataTypes.UUID,
-      defaultValue: Sequelize.UUIDV4,
-      allowNull: false,
-      primaryKey: true
-   }
-});
-
-Vote.belongsTo(User);
-Vote.belongsTo(Punishment);
-
 //sync database
 (async () =>{
    await db.sync();
 })();
+
+const opts = {
+   identity: {
+      username: process.env.BOTNAME,
+      password: process.env.PASS
+   },
+   channels:[
+      process.env.CHANNELS
+   ]
+}
 
 precompileHP();
 
@@ -153,11 +82,7 @@ clientDiscord.on('interactionCreate', async interaction =>{
 	if (!command) return;
 
 	try {
-      if(interaction.commandName === 'punish'){
-         await command.execute(interaction, Vote, User, Punishment);
-      } else {
-         await command.execute(interaction);
-      }
+    await command.execute(interaction, db);
 	} catch (error) {
 		console.error(error);
 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
