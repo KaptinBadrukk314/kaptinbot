@@ -19,7 +19,6 @@ const db = new Sequelize({
 
 const User = require('./models/user')(db);
 const Punishment = require('./models/punishment')(db);
-const Topic = require('./models/topic')(db);
 const Vote = require('./models/vote')(db);
 
 try {
