@@ -5,94 +5,26 @@ describe("mod suite", function(){
   const fs = require('fs');
   let dbMock = new SequelizeMock();
 
-  //test connection
-  const dbMock = new Sequelize({
-     dialect: 'sqlite',
-     storage: 'test.sqlite'
-  });
-
-  //create or alter dbMock tables
-  var TopicMock = dbMock.define('Topic', {
-     id: {
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     },
-     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-     }
-  });
-
   var PunishmentMock = dbMock.define('Punishment', {
-     id: {
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     },
-     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
-     },
-     description: {
-        type: DataTypes.STRING,
-        allowNull: false
-     },
-     voteCount: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        defaultValue: 0
-     },
-     activeFlg:{
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-        set(value){
-          this.setDataValue('activeFlg', value);
-        }
-     }
+     id: '1293810483',
+     name: 'Timeout',
+     description: 'Timeout user for 45 seconds',
+     voteCount: 0,
+     activeFlg: 'false',
+     modActivate: 'true'
   });
 
   var UserMock = dbMock.define('User', {
-     id: {
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     },
-     discordUsername:{
-        type: DataTypes.STRING,
-        allowNull: true
-     },
-     twitchUsername:{
-        type: DataTypes.STRING,
-        allowNull: true,
-        set(value){
-           this.setDataValue('twitchUsername', value);
-        }
-     }
+     id: '982736232',
+     discordUsername:'discordUsername11',
+     twitchUsername: 'twitchUsername11'
   });
 
   var VoteMock = dbMock.define('Vote', {
-     id:{
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     }
+     id:'123456789',
+     userId: '982736232',
+     punishmentId: '1293810483'
   });
-
-  VoteMock.belongsTo(UserMock);
-  VoteMock.belongsTo(PunishmentMock);
-
-  //sync database
-  (async () =>{
-     await dbMock.sync();
-  })();
 
   let SlashCommandBuilder = jasmine.createSpyObj('SlashCommandBuilder',['setName','setDescription','addSubcommand','addStringOption','setRequired','setDefaultPermission'])
 
