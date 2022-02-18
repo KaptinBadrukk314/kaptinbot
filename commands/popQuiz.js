@@ -1,3 +1,5 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } = require('discord.js');
@@ -15,8 +17,8 @@ module.exports = {
                option
                   .setName('topic')
                   .setDescription('Specify the topic for the pop quiz')
-                  .setRequired(false))),
-   async execute(interaction){
+                  .setRequired(false)))
+   async execute(interaction, db){
       if(interaction.options.getSubcommand() === 'start'){
          const quizObj = JSON.parse(quiz);
          const topic = interaction.options.getString('topic');
