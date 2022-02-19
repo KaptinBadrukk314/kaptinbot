@@ -4,6 +4,9 @@ describe("mod suite", function(){
   const { Client, Intents, MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
   const fs = require('fs');
   let dbMock = new SequelizeMock();
+  const User = require('../models/user')(dbMock);
+  const Punishment = require('../models/punishment')(dbMock);
+  const Vote = require('../models/vote')(dbMock);
 
   var PunishmentMock = dbMock.define('Punishment', {
      id: '1293810483',
@@ -36,7 +39,7 @@ describe("mod suite", function(){
     const data = file.data;
     //console.log(data);
   });
-  xdescribe("setup", function(){
+  describe("setup", function(){
     it("should call setName with parameter mod", function(){
       expect(SlashCommandBuilder.setName).toHaveBeenCalledWith('mod');
     });
@@ -96,17 +99,16 @@ describe("mod suite", function(){
     });
     it("should call getSubcommand", async function(){
       const file = require('../commands/mod.js');
-      const data = await file.execute(interaction, User, Vote, Punishment);
-      console.log(data);
+      const data = await file.execute(interaction, dbMock);
+      //console.log(data);
       expect(interaction.options.getSubcommand).toHaveBeenCalled();
     });
     it("should call findOne", async function(){
-      spyOn(Punishment);
-      let punish = spyOn(Punishment, 'findOne');
+
       const file = require('../commands/mod.js');
-      const data = await file.execute(interaction, User, Vote, punish);
-      console.log(data);
-      expect(punish).toHaveBeenCalled();
+      const data = await file.execute(interaction, dbMock);
+      //console.log(data);
+      
     });
     it("should call destroy and save to delete the punishment", function(){
 

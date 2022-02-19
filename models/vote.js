@@ -11,8 +11,8 @@ module.exports = (db) => {
         primaryKey: true
      }
   });
-  const User = require('./models/user')(db);
-  const Punishment = require('./models/punishment')(db);
+  const User = require('./user')(db);
+  const Punishment = require('./punishment')(db);
 
   Vote.belongsTo(User);
   Vote.belongsTo(Punishment);
