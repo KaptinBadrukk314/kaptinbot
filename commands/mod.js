@@ -51,7 +51,7 @@ module.exports = {
             if(temp){
                temp.modActivate = !temp.modActivate;
                await temp.save();
-               await interaction.reply(`${interaction.user.username} has toggled ${beActivated} in Punishments.`);
+               await interaction.reply(`${interaction.user.username} has toggled ${beActivated} to ${temp.modActivate} in Punishments.`);
             }else{
                await interaction.reply(`${beActivated} does not exist in Punishments.`);
             }
