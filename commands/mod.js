@@ -19,7 +19,7 @@ module.exports = {
       .setDefaultPermission(false),
       async execute(interaction, db){
          if (interaction.options.getSubcommand() === 'remove'){
-					  const Punishment = require('./models/punishment')(db);
+					  const Punishment = require('../models/punishment')(db);
             const beRemoved = interaction.options.getString('name');
             let temp = await Punishment.findOne({
                where:{

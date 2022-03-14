@@ -4,6 +4,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } = require('discord.js');
 
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('punish')
@@ -38,6 +39,9 @@ module.exports = {
             .setDescription('Select the punishments you would like to see on the wheel'))
       ,
    async execute(interaction, db) {
+		 const User = require('../models/user')(db);
+		 const Punishment = require('../models/punishment')(db);
+		 const Vote = require('../models/vote')(db);
       if (interaction.options.getSubcommand() === 'agree'){
          let temp = await User.findOne({
             where: {

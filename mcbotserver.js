@@ -10,7 +10,7 @@ const { Sequelize, Op } = require('sequelize');
 //const perm = require('./permission.js');
 
 const guildId = process.env.GUILD_ID;
-const potterBook1 = [];
+var potterBook1 = [];
 
 const db = new Sequelize({
    dialect: 'sqlite',
