@@ -1,6 +1,9 @@
+"use strict";
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { Sequelize, DataTypes, Op } = require('sequelize');
 const { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } = require('discord.js');
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -38,7 +41,10 @@ module.exports = {
          subcommand
             .setName('withdraw')
             .setDescription('Withdraw from the Punishment Wheel')),
-   async execute(interaction, Vote, User, Punishment) {
+   async execute(interaction, db) {
+		 const User = require('../models/user')(db);
+	   const Punishment = require('../models/punishment')(db);
+		 const Vote = require('../models/vote')(db);
       if (interaction.options.getSubcommand() === 'agree'){
          let temp = await User.findOne({
             where: {
@@ -74,9 +80,9 @@ module.exports = {
          await interaction.reply({content:'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true})
       } else if(interaction.options.getSubcommand() === 'view'){
          const temp = await Punishment.findAll();
-         let punishments = "Name---Description---Vote Count---Actived---ModActivated\n";
+         let punishments = "Name---Description---Vote Count---Active\n";
          temp.forEach((item) => {
-            const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}---${item.modActivate}\n`
+            const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}\n`
             punishments = punishments.concat(temp2);
          });
          let embed = new MessageEmbed()
@@ -136,13 +142,6 @@ module.exports = {
                         }
                      });
                      punishId.voteCount += 1;
-                     if(!punishId.modActivate){
-                        let users = await User.findAll();
-                        let userCount = users.length;
-                        if(punishId.voteCount >= userCount/2){
-                           punishId.activeFlg = true;
-                        }
-                     }
                      await punishId.save();
                      await newVote.save();
                   } catch(err){
