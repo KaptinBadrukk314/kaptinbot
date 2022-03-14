@@ -73,6 +73,7 @@ for (const file of eventFiles) {
 	}
 }
 
+//create event handler for interaction creation ie command entered
 clientDiscord.on('interactionCreate', async interaction =>{
    if (!interaction.isCommand()) return;
 
@@ -88,6 +89,7 @@ clientDiscord.on('interactionCreate', async interaction =>{
 	}
 });
 
+//event handler for message sent on twitch
 clientTwitch.on('message', async (channel, userstate, message, self) =>{
    if (self) { return;}
 
@@ -101,9 +103,6 @@ clientTwitch.on('message', async (channel, userstate, message, self) =>{
       let arr = message.trim().split(" ");
       let user = arr.filter(trickHelper);
       let num = Math.floor(Math.random() * 2);
-      console.log(user);
-      console.log(arr);
-      console.log(num);
       if (num == 1){//treat
          clientTwitch.say(channel, `${userstate['username']} gave a treat to ${user}`);
       }else{
@@ -188,11 +187,6 @@ function precompileHP(){
   }
 }
 
-clientTwitch.on('connected', onConnectedHandler);
-
-clientTwitch.connect();
-clientDiscord.login(token);
-
 function onConnectedHandler(addr, port){
    console.log(`* Connected to ${addr}:${port}`);
 }
@@ -207,3 +201,10 @@ async function failDbConnect(db){
      return true;
    }
 }
+
+//end Helper Functions
+
+clientTwitch.on('connected', onConnectedHandler);
+
+clientTwitch.connect();
+clientDiscord.login(token);
