@@ -30,6 +30,9 @@ module.exports = (db) => {
         type: DataTypes.STRING,
         allowNull: true
      }
-   })
+  });
+
+  const SpiritUser = require('./spiritUser')(db);
+  Spirit.belongsTo(SpiritUser);
    return Spirit;
 }

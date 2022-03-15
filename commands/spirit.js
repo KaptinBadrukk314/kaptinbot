@@ -181,13 +181,73 @@ module.exports = {
                      .setRequired(true)))),
    async execute(interaction, db) {
       //require db table files here
+      const Spirit = require('../models/spirit')(db);
+      const SpiritColor = require('../models/spiritColor')(db);
+      const SpiritSmell = require('../models/spiritSmell')(db);
+      const SpiritTaste = require('../models/spiritTaste')(db);
+      const SpiritUser = require('../models/spiritUser')(db);
+      const SpiritTool = require('../models/spiritTool')(db);
+      const SpiritRating = require('../models/spiritRating')(db);
+      const SpiritRecipe = require('../models/spiritRecipe')(db);
+      const SpiritNotes = require('../models/spiritNotes')(db);
+
       if(interaction.options.getSubcommandGroup() === 'drink'){
          if(interaction.options.getSubcommand() === 'add'){
-
+            let user = await SpiritUser.findOne({
+               where: {
+                  discordUsername:{
+                     [Op.eq]: interaction.user.username
+                  }
+               }
+            });
+            if(!user){
+               user = await SpiritUser.build({discordUsername: interaction.user.username});
+               await user.save();
+            }
+            let newSpirit = await Spirit.build({name: interaction.options.getString('name'), age: interaction.options.getInteger('age'), category: interaction.options.getString('category'), distillery: interaction.options.getString('distillery'), region: interaction.options.getString('region') });
+            await newSpirit.save();
+            await interation.replay({content:`Successfully added the spirit ${interaction.options.getString('name')} to the database.`});
          }else if(interaction.options.getSubcommand() === 'edit'){
-
+            let user = await SpiritUser.findOne({
+               where: {
+                  discordUsername:{
+                     [Op.eq]: interaction.user.username
+                  }
+               }
+            });
+            if(!user){
+               user = await SpiritUser.build({discordUsername: interaction.user.username});
+               await user.save();
+               await interaction.reply({content:'You have not added any spirits to edit.', ephemeral: true});
+            }
          }else if(interaction.options.getSubcommand() === 'delete'){
-
+            // TODO: check cascade on delete or possible fallout for removing spirit that a note or recipe relied on
+            let user = await SpiritUser.findOne({
+               where: {
+                  discordUsername:{
+                     [Op.eq]: interaction.user.username
+                  }
+               }
+            });
+            if(!user){
+               user = await SpiritUser.build({discordUsername: interaction.user.username});
+               await user.save();
+               await interaction.reply({content:'You have not added any spirits to delete.', ephemeral: true});
+            }
+            let name = interaction.options.getString('name');
+            let toBeDeleted = await Spirit.findOne({
+               where:{
+                  discordUsername:{
+                     [Op.eq]: interaction.user.username
+                  },
+                  name:{
+                     [Op.eq]: name
+                  }
+               }
+            });
+            await toBeDeleted.destroy();
+            await toBeDeleted.save();
+            await interaction.reply({content:`Successfully deleted the spirit ${name} that you created.`, ephemeral: true});
          }else{
             await interaction.reply({content:'Something went wrong with the spirit command.', ephemeral:true});
          }
