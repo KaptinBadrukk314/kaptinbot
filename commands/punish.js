@@ -127,9 +127,7 @@ module.exports = {
                         [Op.eq]: collected.user.username
                      }
                   }
-               })
-               //console.log(collected);
-               //console.log(userVoteId.id);
+               });
                collected.values.forEach( async (item, i) => {
                   try {
                      await collected.deferUpdate();
