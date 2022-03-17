@@ -18,59 +18,101 @@ module.exports = {
                .setDescription('Add spirit to database')
                .addStringOption( option =>
                   option
-                  .setName('name')
-                  .setDescription('Spirit Name')
-                  .setRequired(true))
+                     .setName('name')
+                     .setDescription('Spirit Name')
+                     .setRequired(true))
                .addStringOption( option =>
                   option
-                  .setName('category')
-                  .setDescription('Category of the spirit i.e. Whiskey, Gin, Scotch, Vodka.. etc.')
-                  .setRequired(true))
+                     .setName('category')
+                     .setDescription('Category of the spirit i.e. Whiskey, Gin, Scotch, Vodka.. etc.')
+                     .setRequired(true))
                .addIntegerOption( option =>
                   option
-                  .setName('age')
-                  .setDescription('The number of years the spirit was aged (if applicable).')
-                  .setRequired(false))
+                     .setName('age')
+                     .setDescription('The number of years the spirit was aged (if applicable).')
+                     .setRequired(false))
                .addStringOption( option =>
                   option
-                  .setName('distillery')
-                  .setDescription('The distillery where the spirit was distilled (if known).')
-                  .setRequired(false))
+                     .setName('distillery')
+                     .setDescription('The distillery where the spirit was distilled (if known).')
+                     .setRequired(false))
                .addStringOption( option =>
                   option
-                  .setName('region')
-                  .setDescription('The region where the spirit was distilled (if available).')
-                  .setRequired(false)))
+                     .setName('region')
+                     .setDescription('The region where the spirit was distilled (if available).')
+                     .setRequired(false)))
          .addSubcommand( subcommand =>
             subcommand
                .setName('edit')
                .setDescription('Edit a previously added spirit.')
                .addStringOption( option =>
                   option
-                  .setName('name')
-                  .setDescription('Spirit Name')
-                  .setRequired(true))
+                     .setName('name')
+                     .setDescription('Spirit Name')
+                     .setRequired(true))
                .addStringOption( option =>
                   option
-                  .setName('category')
-                  .setDescription('Category of the spirit i.e. Whiskey, Gin, Scotch, Vodka.. etc.')
-                  .setRequired(true))
+                     .setName('category')
+                     .setDescription('Category of the spirit i.e. Whiskey, Gin, Scotch, Vodka.. etc.')
+                     .setRequired(true))
                .addIntegerOption( option =>
                   option
-                  .setName('age')
-                  .setDescription('The number of years the spirit was aged (if applicable).')
-                  .setRequired(false))
+                     .setName('age')
+                     .setDescription('The number of years the spirit was aged (if applicable).')
+                     .setRequired(false))
                .addStringOption( option =>
                   option
-                  .setName('distillery')
-                  .setDescription('The distillery where the spirit was distilled (if known).')
-                  .setRequired(false))
+                     .setName('distillery')
+                     .setDescription('The distillery where the spirit was distilled (if known).')
+                     .setRequired(false))
                .addStringOption( option =>
                   option
-                  .setName('region')
-                  .setDescription('The region where the spirit was distilled (if available).')
-                  .setRequired(false)))
-      )
+                     .setName('region')
+                     .setDescription('The region where the spirit was distilled (if available).')
+                     .setRequired(false)))
+         .addSubcommand( subcommand =>
+            subcommand
+               .setName('view')
+               .setDescription('View the spirit(s)')
+               .addStringOption( option =>
+                  option
+                     .setName('user')
+                     .setDescription('User of that added the spirits you want to view')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('spiritname')
+                     .setDescription('Name of the spirit you want to view.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('category')
+                     .setDescription('Category of spirit(s) you want to view.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('distillery')
+                     .setDescription('Name of the distillery of the spirit(s) you want to view.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('region')
+                     .setDescription('Name of the region the spirit(s) you want to view.')
+                     .setRequired(false))
+               .addIntegerOption( option =>
+                  option
+                     .setName('rating')
+                     .setDescription('Rating of the spirit(s) you want to view.')
+                     .addChoice('1', 1)
+                     .addChoice('2', 2)
+                     .addChoice('3', 3)
+                     .addChoice('4', 4)
+                     .addChoice('5', 5)
+                     .setRequired(false)))
+      .addSubcommand( subcommand =>
+         subcommand
+            .setName('help')
+            .setDescription('Help command for drink command group')))
    .addSubcommandGroup(group =>
       group
          .setName('note')
@@ -96,7 +138,50 @@ module.exports = {
                   option
                      .setName('name')
                      .setDescription('Name of the spirit you are deleting your tasting note of.')
-                     .setRequired(true))))
+                     .setRequired(true)))
+         .addSubcommand( subcommand =>
+            subcommand
+               .setName('view')
+               .setDescription('View tasting notes. Use spirit note help for instructions on how to use the command.')
+               .addStringOption( option =>
+                  option
+                     .setName('user')
+                     .setDescription('User of the tasting note(s) you want to view')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('spiritname')
+                     .setDescription('Name of the spirit you want to view the tasting notes for.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('category')
+                     .setDescription('Category of spirit(s) you want to view tasting notes of.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('distillery')
+                     .setDescription('Name of the distillery of the spirit(s) you want to view tasting notes of.')
+                     .setRequired(false))
+               .addStringOption( option =>
+                  option
+                     .setName('region')
+                     .setDescription('Name of the region the spirit(s) you want to view the tasting notes of.')
+                     .setRequired(false))
+               .addIntegerOption( option =>
+                  option
+                     .setName('rating')
+                     .setDescription('Rating of the spirit(s) you want to view the tasting notes of.')
+                     .addChoice('1', 1)
+                     .addChoice('2', 2)
+                     .addChoice('3', 3)
+                     .addChoice('4', 4)
+                     .addChoice('5', 5)
+                     .setRequired(false)))
+         .addSubcommand( subcommand =>
+            subcommand
+               .setName('help')
+               .setDescription('Instructions on how to use the note commands')))
    .addSubcommandGroup( group =>
       group
          .setName('recipe'),
@@ -127,7 +212,16 @@ module.exports = {
                   option
                      .setName('name')
                      .setDescription('Name of the cocktail recipe you want to delete.')
-                     .setRequired(true))))
+                     .setRequired(true)))
+         .addSubcommand( subcommand =>
+            subcommand
+               .setName('view')
+               .setDescription('View recipes in the database. Leave name parameter empty to search all.')
+               .addStringOption( option =>
+                  option
+                     .setName('name')
+                     .setDescription('Name of recipe to search for.')
+                     .setRequired(false))))
    .addSubcommandGroup( group =>
       group
          .setName('rating')
@@ -219,35 +313,14 @@ module.exports = {
                user = await SpiritUser.build({discordUsername: interaction.user.username});
                await user.save();
                await interaction.reply({content:'You have not added any spirits to edit.', ephemeral: true});
+            }else{
+               //edit spirit
+
             }
-         }else if(interaction.options.getSubcommand() === 'delete'){
-            // TODO: check cascade on delete or possible fallout for removing spirit that a note or recipe relied on
-            let user = await SpiritUser.findOne({
-               where: {
-                  discordUsername:{
-                     [Op.eq]: interaction.user.username
-                  }
-               }
-            });
-            if(!user){
-               user = await SpiritUser.build({discordUsername: interaction.user.username});
-               await user.save();
-               await interaction.reply({content:'You have not added any spirits to delete.', ephemeral: true});
-            }
-            let name = interaction.options.getString('name');
-            let toBeDeleted = await Spirit.findOne({
-               where:{
-                  discordUsername:{
-                     [Op.eq]: interaction.user.username
-                  },
-                  name:{
-                     [Op.eq]: name
-                  }
-               }
-            });
-            await toBeDeleted.destroy();
-            await toBeDeleted.save();
-            await interaction.reply({content:`Successfully deleted the spirit ${name} that you created.`, ephemeral: true});
+         }else if(interaction.options.getSubcommand() === 'view'){
+
+         }else if(interaction.options.getSubcommand() === 'help'){
+
          }else{
             await interaction.reply({content:'Something went wrong with the spirit command.', ephemeral:true});
          }
@@ -257,6 +330,10 @@ module.exports = {
          }else if(interaction.options.getSubcommand() === 'edit'){
 
          }else if(interaction.options.getSubcommand() === 'delete'){
+
+         }else if(interaction.options.getSubcommand() === 'view'){
+
+         }else if(interaction.options.getSubcommand() === 'help'){
 
          }else{
             await interaction.reply({content:'Something went wrong with the tasting note command.', ephemeral:true});
@@ -277,6 +354,8 @@ module.exports = {
          }else if(interaction.options.getSubcommand() === 'edit'){
 
          }else if(interaction.options.getSubcommand() === 'delete'){
+
+         }else if(interaction.options.getSubcommand() === 'view'){
 
          }else{
             await interaction.reply({content:'Something went wrong with the recipe command.', ephemeral:true});

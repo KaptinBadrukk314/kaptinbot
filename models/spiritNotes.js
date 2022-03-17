@@ -21,9 +21,22 @@ module.exports = (db) => {
    const SpiritSmell = require('./spiritSmell')(db);
    const SpiritColor = require('./spiritColor')(db);
    const SpiritUser = require('./spiritUser')(db);
+   const Spirit = require('./spirit')(db);
+   const SpiritRecipe = require('./spiritRecipe')(db);
 
    //create foriegn keys
    SpiritNotes.belongsTo(SpiritUser);
+   //allow note to be for either spirit or recipe 
+   SpiritNotes.belongsTo(Spirit, {
+      foreignKey: {
+         allowNull: true
+      }
+   });
+   SpiritNotes.belongsTo(SpiritRecipe,{
+      foreignKey: {
+         allowNull: true
+      }
+   });
    SpiritNotes.hasMany(SpiritSmell);
    SpiritNotes.hasMany(SpiritColor);
    SpiritNotes.hasMany(SpiritTaste);
