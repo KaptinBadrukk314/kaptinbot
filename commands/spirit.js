@@ -315,14 +315,68 @@ module.exports = {
                await interaction.reply({content:'You have not added any spirits to edit.', ephemeral: true});
             }else{
                //edit spirit
+							 //accepts name and category and more if needed to differ
+							 //search db for particular spirit
+							 //use buttons to select what to update
+							 let where = {{name:{[Op.eq] interaction.options.getString('name')}, {category:{[Op.eq]interaction.options.getString('category')}};
+							 if(interaction.options.getInteger('age')){
+								 where.age = {[Op.eq] interaction.options.getInteger('age')};
+							 }
+							 if(interaction.options.getString('distillery')){
+								 where.distillery = {[Op.eq] interaction.options.getString('distillery')};
+							 }
+							 if(interaction.options.getString('region')){
+								 where.region = {[Op.eq] interaction.options.getString('region')};
+							 }
+							 let spiritEdit = Spirit.findAll(where);
+							 switch(spiritEdit.length){
+								 default://more than one
+									 //drop down to select which one
+									 //set spiritEdit as selected
+									 //no break to fall into case 1
+									 let spiritArray = [];
+									 spiritEdit.forEach((item)=>{
+										 const temp = {
+											 label: item.name,
+											 description: `${item.category}, ${item.age}, ${item.distillery}, ${item.region}`,
+											 value: item.id
+										 };
+										 spiritArray.push(temp);
+									 });
+									 const row = new MessageActionRow()
+									 		.addComponents(
+												new MessageSelectMenu()
+													.setCustomId('selectSpirit')
+													.setPlaceholder('Select the spirit to edit')
+													.setMinValues(1)
+													.setMaxValues(1)
+													.addOptions(spiritArray);
+											);
+										await interaction.reply({content: 'Select the spirit to edit', ephemeral: true, components:[row]});
+										const collector = interaction.createMessageComponentCollector({componentType: 'SELECT_MENU', time: 60000, errors: ['time']});
+										collector.on('collect', i => {
+											if(i.user.id === interaction.user.id){
+												//process spirit collected
+											}else{
 
+											}
+										});
+								 case 1://exactly one
+								 	 //use buttons to decide which to update
+									 //capture response afterwards
+									 //update entry to reflect edit
+									 break;
+								 case 0://none returned
+									 await interaction.reply({content:'No Spirit found.', ephemeral:true});
+									 break;
+							 }
             }
          }else if(interaction.options.getSubcommand() === 'view'){
 
          }else if(interaction.options.getSubcommand() === 'help'){
 
          }else{
-            await interaction.reply({content:'Something went wrong with the spirit command.', ephemeral:true});
+            await interaction.reply({content:'Something went wrong with the spirit drink command.', ephemeral:true});
          }
       }else if(interaction.options.getSubcommandGroup() === 'note'){
          if(interaction.options.getSubcommand() === 'add'){
