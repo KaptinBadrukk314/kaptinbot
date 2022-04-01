@@ -352,19 +352,25 @@ module.exports = {
 													.setMaxValues(1)
 													.addOptions(spiritArray);
 											);
-										await interaction.reply({content: 'Select the spirit to edit', ephemeral: true, components:[row]});
-										const collector = interaction.createMessageComponentCollector({componentType: 'SELECT_MENU', time: 60000, errors: ['time']});
-										collector.on('collect', i => {
-											if(i.user.id === interaction.user.id){
-												//process spirit collected
-											}else{
+									await interaction.reply({content: 'Select the spirit to edit', ephemeral: true, components:[row]});
+									const collector = interaction.createMessageComponentCollector({componentType: 'SELECT_MENU', time: 60000, errors: ['time']});
+                           let spiritToEdit =  [];
+									collector.on('collect', async i => {
+                              spiritToEdit = await Spirit.findOne({
+                                 where:{
+                                    id:{
+                                       [Op.eq]: i.values[0]
+                                    }
+                                 }
+                              });
+                              i.reply({content: 'Processing...', ephemeral: true});
+									});
+                           collector.on('end', collected => {
 
-											}
-										});
+                           });
+                           break;
 								 case 1://exactly one
-								 	 //use buttons to decide which to update
-									 //capture response afterwards
-									 //update entry to reflect edit
+
 									 break;
 								 case 0://none returned
 									 await interaction.reply({content:'No Spirit found.', ephemeral:true});
@@ -417,3 +423,5 @@ module.exports = {
       }
    }
 };
+
+function editSpiritHelper(spirit,)
