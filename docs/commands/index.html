@@ -1,10 +1,9 @@
 ---
 layout: base
 title: Commands
-permalink: /commands/
 ---
 <!-- This loops through the paginated posts -->
-{% for command in paginator.posts %}
+{% for command in paginator.commands %}
   <h1>{{ command.title }}</h1>
   <p class="author">
     <span class="date">{{ command.date | date: '%B %d, %Y' }}</span>
