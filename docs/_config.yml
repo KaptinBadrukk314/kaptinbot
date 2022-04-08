@@ -1,1 +1,9 @@
+title: KaptinBot wiki
+description: Wiki for KaptinBot
+markdown: kramdown
+google_analytics: G-TQ37R5G1QM
+permalink: /commands/:title
 theme: jekyll-theme-hacker
+paginate: 5
+paginate_path: "commands/page:num"
+excerpt_separator: <!--more-->
