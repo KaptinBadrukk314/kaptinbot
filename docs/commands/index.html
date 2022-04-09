@@ -3,14 +3,14 @@ layout: base
 title: Commands
 ---
 <!-- This loops through the paginated posts -->
-{% for command in paginator.posts %}
-  <h1>{{ command.title }}</h1>
+{% for post in paginator.posts %}
+  <h1>{{ post.title }}</h1>
   <p class="author">
-    <span class="date">{{ command.date | date: '%B %d, %Y' }}</span>
+    <span class="date">{{ post.date | date: '%B %d, %Y' }}</span>
   </p>
   <div class="content">
-    {{ command.excerpt }}
-    <h4><a href="{{ command.url }}">Read more...</a><h4>
+    {{ post.excerpt }}
+    <h4><a href="{{ post.url }}">Read more...</a><h4>
   </div>
   <hr>
 {% endfor %}
