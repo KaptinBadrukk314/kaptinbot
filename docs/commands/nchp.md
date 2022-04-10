@@ -2,6 +2,7 @@
 layout: post
 title: "nchp"
 category: nchp
+parent: Commands
 ---
 
 ## No Context Harry Potter

@@ -1,9 +1,8 @@
 ---
 layout: post
 title: Trick or Treat
-excerpt_separator: <!--more-->
-permalink: /kaptinbot/commands/holiday/2022/04/09/trick-or-treat
 category: holiday
+parent: Commands
 ---
 
 ## Trick or Treat
