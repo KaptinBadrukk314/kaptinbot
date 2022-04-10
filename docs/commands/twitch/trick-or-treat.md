@@ -2,7 +2,8 @@
 layout: post
 title: Trick or Treat
 category: holiday
-parent: Commands
+parent: Twitch
+grand_parent: Commands
 ---
 
 ## Trick or Treat

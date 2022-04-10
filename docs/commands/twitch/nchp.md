@@ -2,7 +2,8 @@
 layout: post
 title: "nchp"
 category: nchp
-parent: Commands
+parent: Twitch
+grand_parent: Commands
 ---
 
 ## No Context Harry Potter

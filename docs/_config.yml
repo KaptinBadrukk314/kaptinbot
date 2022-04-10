@@ -8,7 +8,7 @@ kramdown:
 
 ga-tracking: G-TQ37R5G1QM
 ga_tracking_anonymize_ip: true
-permalink: kaptinbot/commands/:categories/:year/:month/:day/:title:output_ext
+
 remote-theme: just-the-docs/just-the-docs
 
 base-url: "/kaptinbot"
