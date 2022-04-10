@@ -1,7 +1,6 @@
 ---
-layout: base
+layout: page
 title: Installation
-permalink: /installation/
 ---
 
 ## Installation
