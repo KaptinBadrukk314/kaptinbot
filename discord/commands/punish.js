@@ -42,9 +42,9 @@ module.exports = {
             .setName('withdraw')
             .setDescription('Withdraw from the Punishment Wheel')),
    async execute(interaction, db) {
-		 const User = require('../models/user')(db);
-	   const Punishment = require('../models/punishment')(db);
-		 const Vote = require('../models/vote')(db);
+		 const User = require('../db/models/user')(db);
+	   const Punishment = require('../db/models/punishment')(db);
+		 const Vote = require('../db/models/vote')(db);
       if (interaction.options.getSubcommand() === 'agree'){
          let temp = await User.findOne({
             where: {

@@ -17,9 +17,9 @@ const db = new Sequelize({
    storage: 'mcdata.sqlite'
 });
 
-const User = require('./models/user')(db);
-const Punishment = require('./models/punishment')(db);
-const Vote = require('./models/vote')(db);
+const User = require('./db/models/user')(db);
+const Punishment = require('./db/models/punishment')(db);
+const Vote = require('./db/models/vote')(db);
 
 try {
   db.authenticate();
@@ -50,14 +50,14 @@ const clientDiscord = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 const clientTwitch = new tmi.client(opts);
 
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./discord/events').filter(file => file.endsWith('.js'));
 
 clientDiscord.commands = new Collection();
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./discord/commands').filter(file => file.endsWith('.js'));
 
 //load commands for discord
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
+	const command = require(`./discord/commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	clientDiscord.commands.set(command.data.name, command);
@@ -65,7 +65,7 @@ for (const file of commandFiles) {
 
 //load events for discord
 for (const file of eventFiles) {
-	const event = require(`./events/${file}`);
+	const event = require(`./discord/events/${file}`);
 	if (event.once) {
 		clientDiscord.once(event.name, (...args) => event.execute(...args));
 	} else {
