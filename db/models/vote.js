@@ -1,21 +1,33 @@
 "use strict";
 
-const { Sequelize, DataTypes } = require('sequelize');
+import pkg from 'sequelize'
+const { Sequelize, DataTypes } = pkg;
 
-module.exports = (db) => {
-  const Vote = db.define('Vote', {
-     id:{
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     }
-  });
-  const User = require('../models/user')(db);
-  const Punishment = require('../models/punishment')(db);
+import {User} from './user.js'
+import {Punishment} from './punishment.js'
 
-  Vote.belongsTo(User);
-  Vote.belongsTo(Punishment);
+let Vote = null;
 
-  return Vote;
+function voteInit(db){
+  if(Vote != null){
+     Vote = db.define('Vote', {
+        id:{
+           type: DataTypes.UUID,
+           defaultValue: Sequelize.UUIDV4,
+           allowNull: false,
+           primaryKey: true
+        }
+     });
+     //const User = require('../models/user')(db);
+     //const Punishment = require('../models/punishment')(db);
+
+     Vote.belongsTo(User);
+     Vote.belongsTo(Punishment);
+
+     return Vote;
+  } else {
+     console.log("Vote Already Initialized");
+  }
 }
+
+export { Vote, voteInit };

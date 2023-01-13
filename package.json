@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "mcbotserver.js",
+  "type": "module",
   "dependencies": {
     "@discordjs/rest": "0.1.0-canary.0",
     "discord-api-types": "^0.24.0",
@@ -15,10 +16,14 @@
     "tmi.js": "^1.8.5"
   },
   "devDependencies": {
-    "@types/node": "^16.11.1"
+    "@types/node": "^16.11.1",
+    "eslint": "^8.31.0",
+    "eslint-plugin-react": "^7.32.0"
   },
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "start": "node .",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC"

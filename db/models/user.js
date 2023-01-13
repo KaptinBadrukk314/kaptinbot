@@ -1,26 +1,35 @@
 "use strict";
 
-const { Sequelize, DataTypes } = require('sequelize');
+import pkg from 'sequelize'
+const { Sequelize, DataTypes } = pkg;
 
-module.exports = (db) => {
-  const User = db.define('User', {
-     id: {
-        type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
-        allowNull: false,
-        primaryKey: true
-     },
-     discordUsername:{
-        type: DataTypes.STRING,
-        allowNull: true
-     },
-     twitchUsername:{
-        type: DataTypes.STRING,
-        allowNull: true,
-        set(value){
-           this.setDataValue('twitchUsername', value);
+let User = null;
+
+function userInit(db){
+  if(User == null){
+     User = db.define('User', {
+        id: {
+           type: DataTypes.UUID,
+           defaultValue: Sequelize.UUIDV4,
+           allowNull: false,
+           primaryKey: true
+        },
+        discordUsername:{
+           type: DataTypes.STRING,
+           allowNull: true
+        },
+        twitchUsername:{
+           type: DataTypes.STRING,
+           allowNull: true,
+           set(value){
+              this.setDataValue('twitchUsername', value);
+           }
         }
-     }
-  });
-  return User;
+     });
+     return User;
+  } else {
+     console.log("User Already Initialized");
+ }
 }
+
+export { User, userInit}
