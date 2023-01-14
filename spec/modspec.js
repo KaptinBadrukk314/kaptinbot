@@ -1,22 +1,19 @@
 describe("mod test suite", function(){
 
-  const SequelizeMock = require('sequelize-mock');
+  const proxyquire = require('proxyquire');
   const { Client, Intents, MessageActionRow, MessageSelectMenu, Permissions } = require('discord.js');
   const fs = require('fs');
-  var dbMock = new SequelizeMock();
-  const User = require('../models/user')(dbMock);
-  const Punishment = require('../models/punishment')(dbMock);
-  const Vote = require('../models/vote')(dbMock);
-  const proxyquire = require('proxyquire');
+  const { makeMockModels } = require('sequelize-test-helpers');
 
-  var PunishmentMock = dbMock.define('punishment', {
+  const data= {
      id: '1293810483',
      name: 'Timeout',
      description: 'Timeout user for 45 seconds',
      voteCount: 0,
      activeFlg: 'false',
      modActivate: 'true'
-  });
+  };
+
 
   // var UserMock = dbMock.define('user', {
   //    id: '982736232',
@@ -32,7 +29,7 @@ describe("mod test suite", function(){
 
   //const punishment = proxyquire('../commands/mod', {'../models/punishment': PunishmentMock});
 
-  var SlashCommandBuilder = jasmine.createSpyObj('SlashCommandBuilder',['setName','setDescription','addSubcommand','addStringOption','setRequired','setDefaultPermission'])
+  //var SlashCommandBuilder = jasmine.createSpyObj('SlashCommandBuilder',['setName','setDescription','addSubcommand','addStringOption','setRequired','setDefaultPermission'])
   //const slashCommandBuilder = proxyquire('../commands/mod', {'SlashCommandBuilder': SlashCommandBuilder});
 
   beforeEach(function(){
@@ -44,7 +41,6 @@ describe("mod test suite", function(){
     //console.log(data);
   });
   xdescribe("setup", function(){
-    const file = require('../commands/mod.js');
     let subCommand = 'remove';
     let stringOption = 'name';
     let stringValue = 0;
