@@ -9,24 +9,25 @@ import {Punishment} from './punishment.js'
 let Vote = null;
 
 function voteInit(db){
-  if(Vote != null){
-     Vote = db.define('Vote', {
-        id:{
-           type: DataTypes.UUID,
-           defaultValue: Sequelize.UUIDV4,
-           allowNull: false,
-           primaryKey: true
-        }
-     });
-     //const User = require('../models/user')(db);
-     //const Punishment = require('../models/punishment')(db);
+  if (Vote != null){
+	  Vote = db.define('Vote', {
+		  id:{
+			  type: DataTypes.UUID,
+			  defaultValue: Sequelize.UUIDV4,
+			  allowNull: false,
+			  primaryKey: true,
+		  },
+	  });
+	  //const User = require('../models/user')(db);
+	  //const Punishment = require('../models/punishment')(db);
 
-     Vote.belongsTo(User);
-     Vote.belongsTo(Punishment);
+	  Vote.belongsTo(User);
+	  Vote.belongsTo(Punishment);
 
-     return Vote;
-  } else {
-     console.log("Vote Already Initialized");
+	  return Vote;
+  } else
+  {
+	  console.log("Vote Already Initialized");
   }
 }
 

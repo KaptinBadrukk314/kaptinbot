@@ -9,12 +9,12 @@ dotenv.config();
 import { Client, Collection, Intents } from 'discord.js'
 
 //imports for 
-import { modData, modExecute } from './commands/mod.js';
-import { popQuizData, popQuizExecute } from './commands/popQuiz.js';
-import { punishData, punishExecute } from './commands/punish.js';
+import { modData} from './commands/mod.js';
+import { popQuizData } from './commands/popQuiz.js';
+import { punishData } from './commands/punish.js';
 
 const clientDiscord = new Client({ intents: [Intents.FLAGS.GUILDS] });
-const guildId = process.env.GUILD_ID;
+//const guildId = process.env.GUILD_ID;
 
 const eventFiles = fs.readdirSync('./discord/events').filter(file => file.endsWith('.js'));
 
@@ -22,9 +22,9 @@ clientDiscord.commands = new Collection();
 
 //load commands for discord
 //manually added for each command after ES6 refactor
-clientDiscord.commands.set(modData.name, modExecute);
-clientDiscord.commands.set(popQuizData.name, popQuizExecute);
-clientDiscord.commands.set(punishData.name, punishExecute);
+clientDiscord.commands.set(modData.name, modData);
+clientDiscord.commands.set(popQuizData.name, popQuizData);
+clientDiscord.commands.set(punishData.name, punishData);
 
 
 //load events for discord
@@ -45,7 +45,7 @@ clientDiscord.on('interactionCreate', async interaction =>{
 	if (!command) return;
 	
 	try {
-    	await clientDiscord.commands.get(interaction.commandName)(interaction, db);
+		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });

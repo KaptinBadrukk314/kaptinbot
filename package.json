@@ -1,5 +1,5 @@
 {
-  "name": "bottymcbotface",
+  "name": "kaptinbot",
   "version": "1.0.0",
   "description": "",
   "main": "mcbotserver.js",
@@ -12,7 +12,7 @@
     "jasmine": "^3.10.0",
     "sequelize": "^6.7.0",
     "sqlite3": "^4.2.0",
-    "tmi": "^2.0.0",
+    "tmi": "^0.2.2",
     "tmi.js": "^1.8.5"
   },
   "devDependencies": {
@@ -25,6 +25,6 @@
     "start": "node .",
     "lint": "eslint ."
   },
-  "author": "",
+  "author": "Benjamin Hamlin",
   "license": "ISC"
 }

@@ -1,10 +1,10 @@
 "use strict";
 
-const { Client, Collection, Intents } = require('discord.js');
-const { Sequelize, DataTypes, Op } = require('sequelize');
-const tmi = require('tmi.js');
-const fs = require('fs');
-const { token } = require('./config.json');
+import { Client, Intents } from 'discord.js';
+// import { Sequelize, DataTypes, Op } from 'sequelize';
+// import tmi from 'tmi.js';
+// import fs from 'fs';
+import { token } from './config.json';
 const guildId = process.env.GUILD_ID;
 
 
@@ -34,10 +34,8 @@ const fullPermissions = [
 ];
 clientDiscord.login(token);
 
-module.exports = {
-   runPermissions: async function(){
-      await clientDiscord.guilds.cache.get(guildId)?.commands.permissions.set({ fullPermissions });
-      //console.log('Permissions maybe set');
-      return 0;
-   }
+export async function runPermissions() {
+   await clientDiscord.guilds.cache.get(guildId)?.commands.permissions.set({ fullPermissions });
+   //console.log('Permissions maybe set');
+   return 0;
 }
