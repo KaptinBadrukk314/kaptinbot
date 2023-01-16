@@ -1,11 +1,11 @@
-"use strict";
-//const { SlashCommandBuilder }= require('@discordjs/builders');
-import { SlashCommandBuilder } from '@discordjs/builders'
-//import pkg from 'sequelize'
-//const Punishment = require('../db/models/punishment')(db);
-import {Punishment} from '../../db/models/punishment.js'
-//const { Sequelize, DataTypes } = pkg;
-//import { MessageActionRow, MessageSelectMenu, Permissions } from 'discord.js';
+'use strict';
+// const { SlashCommandBuilder }= require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
+// import pkg from 'sequelize'
+// const Punishment = require('../db/models/punishment')(db);
+import { Punishment } from '../../db/models/punishment.cjs';
+// const { Sequelize, DataTypes } = pkg;
+// import { MessageActionRow, MessageSelectMenu, Permissions } from 'discord.js';
 
 
 const modData = new SlashCommandBuilder()
@@ -28,33 +28,36 @@ const modData = new SlashCommandBuilder()
 modData.execute = async (interaction) => {
 	if (interaction.options.getSubcommand() === 'remove') {
 		const beRemoved = interaction.options.getString('name');
-		let temp = await Punishment.findOne({
+		const temp = await Punishment.findOne({
 			where: {
-				name: beRemoved
-			}
+				name: beRemoved,
+			},
 		});
 		if (temp) {
 			await temp.destroy();
 			await temp.save();
 			await interaction.reply(`${interaction.user.username} has removed ${beRemoved} from the Punishments.`);
-		} else {
+		}
+		else {
 			await interaction.reply(`${beRemoved} does not exist in Punishments.`);
 		}
-	} else if (interaction.options.getSubcommand() === 'activetoggle') {
+	}
+	else if (interaction.options.getSubcommand() === 'activetoggle') {
 		const beActivated = interaction.options.getString('name');
-		let temp = await Punishment.findOne({
+		const temp = await Punishment.findOne({
 			where: {
-				name: beActivated
-			}
+				name: beActivated,
+			},
 		});
 		if (temp) {
 			temp.modActivate = !temp.modActivate;
 			await temp.save();
 			await interaction.reply(`${interaction.user.username} has toggled ${beActivated} to ${temp.modActivate} in Punishments.`);
-		} else {
+		}
+		else {
 			await interaction.reply(`${beActivated} does not exist in Punishments.`);
 		}
 	}
 };
 
-export { modData }
+export { modData };

@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
-import { SlashCommandBuilder } from '@discordjs/builders'
-import pkg from 'sequelize'
+import { SlashCommandBuilder } from '@discordjs/builders';
+import pkg from 'sequelize';
 const { Op } = pkg;
 import { MessageActionRow, MessageSelectMenu, MessageEmbed } from 'discord.js';
-import {Punishment} from '../../db/models/punishment.js'
-import {User} from '../../db/models/user.js'
-import {Vote} from '../../db/models/vote.js'
+import { Punishment } from '../../db/models/punishment.cjs';
+import { User } from '../../db/models/user.cjs';
+import { Vote } from '../../db/models/vote.cjs';
 
 
 const punishData = new SlashCommandBuilder()
@@ -38,69 +38,75 @@ const punishData = new SlashCommandBuilder()
 		.setDescription('Withdraw from the Punishment Wheel'));
 
 punishData.execute = async (interaction) => {
-	//const User = require('../db/models/user')(db);
-	//const Punishment = require('../db/models/punishment')(db);
-	//const Vote = require('../db/models/vote')(db);
+	// const User = require('../db/models/user')(db);
+	// const Punishment = require('../db/models/punishment')(db);
+	// const Vote = require('../db/models/vote')(db);
 	if (interaction.options.getSubcommand() === 'agree') {
 		let temp = await User.findOne({
 			where: {
 				discordUsername: {
-					[Op.eq]: interaction.user.username
-				}
-			}
+					[Op.eq]: interaction.user.username,
+				},
+			},
 		});
 		if (!temp) {
 			temp = await User.build({ discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
-		} else if (temp.discordUsername && temp.twitchUsername) {
+		}
+		else if (temp.discordUsername && temp.twitchUsername) {
 			await interaction.reply({ content: 'You are all set to participate in the punishment wheel.', ephemeral: true });
-		} else {
+		}
+		else {
 			temp.twitchUsername = interaction.options.getString('twitchusername');
 		}
 		console.log(temp);
 		await temp.save();
 		await interaction.reply({ content: 'Thank you for signing up for punishment.', ephemeral: true });
-	} else if (interaction.options.getSubcommand() === 'add') {
+	}
+	else if (interaction.options.getSubcommand() === 'add') {
 		let temp = await Punishment.findOne({
 			where: {
 				name: {
-					[Op.eq]: interaction.options.getString('name')
-				}
-			}
+					[Op.eq]: interaction.options.getString('name'),
+				},
+			},
 		});
 		if (!temp) {
 			temp = await Punishment.build({ name: interaction.options.getString('name'), description: interaction.options.getString('description') });
-		} else {
+		}
+		else {
 			await interaction.reply({ content: 'That name already exists in our database. Please resubmit with a unique name.', ephemeral: true });
 		}
 		await temp.save();
 		await interaction.reply({ content: 'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true });
-	} else if (interaction.options.getSubcommand() === 'view') {
+	}
+	else if (interaction.options.getSubcommand() === 'view') {
 		const temp = await Punishment.findAll();
-		let punishments = "Name---Description---Vote Count---Active\n";
+		let punishments = 'Name---Description---Vote Count---Active\n';
 		temp.forEach((item) => {
 			const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}\n`;
 			punishments = punishments.concat(temp2);
 		});
-		let embed = new MessageEmbed()
+		const embed = new MessageEmbed()
 			.setColor('#0099ff')
 			.setDescription('List of submitted punishments.')
 			.setTitle('Punishment List')
 			.addField('Punishments', punishments);
 		await interaction.reply({ embeds: [embed] });
-	} else if (interaction.options.getSubcommand() === 'vote') {
+	}
+	else if (interaction.options.getSubcommand() === 'vote') {
 		const temp = await Punishment.findAll();
 		console.log(temp);
 		if (temp.length > 0) {
-			let punishments = [];
+			const punishments = [];
 			temp.forEach((item) => {
 				const temp2 = {
 					label: item.name,
 					description: item.description,
-					value: item.id
+					value: item.id,
 				};
 				punishments.push(temp2);
 			});
-			//console.log(punishments);
+			// console.log(punishments);
 			const row = new MessageActionRow()
 				.addComponents(
 					new MessageSelectMenu()
@@ -108,54 +114,57 @@ punishData.execute = async (interaction) => {
 						.setPlaceholder('Select to vote here')
 						.setMinValues(1)
 						.setMaxValues(punishments.length)
-						.addOptions(punishments)
+						.addOptions(punishments),
 				);
 
-			const filter = (interaction) => interaction.isSelectMenu() && interaction.customId === 'selectVote';
+			const filter = (interaction1) => interaction1.isSelectMenu() && interaction1.customId === 'selectVote';
 
 			const collector = interaction.channel.createMessageComponentCollector({ filter });
 
 			collector.on('collect', async (collected) => {
-				let userVoteId = await User.findOne({
+				const userVoteId = await User.findOne({
 					where: {
 						discordUsername: {
-							[Op.eq]: collected.user.username
-						}
-					}
+							[Op.eq]: collected.user.username,
+						},
+					},
 				});
-				//console.log(collected);
-				//console.log(userVoteId.id);
+				// console.log(collected);
+				// console.log(userVoteId.id);
 				collected.values.forEach(async (item) => {
 					try {
 						await collected.deferUpdate();
-						let newVote = await Vote.build({ userId: userVoteId.id, punishmentId: item });
-						let punishId = await Punishment.findOne({
+						const newVote = await Vote.build({ userId: userVoteId.id, punishmentId: item });
+						const punishId = await Punishment.findOne({
 							where: {
 								id: {
-									[Op.eq]: item
-								}
-							}
+									[Op.eq]: item,
+								},
+							},
 						});
 						punishId.voteCount += 1;
 						await punishId.save();
 						await newVote.save();
-					} catch (err) {
+					}
+					catch (err) {
 						console.log(err);
 					}
 				});
 				await collected.channel.send({ content: `${collected.user.username}, your selections were submitted`, ephemeral: true, components: [] });
 			});
 			await interaction.reply({ content: 'Select all punishments you would wish to see active.', ephemeral: true, components: [row] });
-		} else {
+		}
+		else {
 			await interaction.reply({ content: 'There is nothing to vote for.', ephemeral: true });
 		}
-	} else if (interaction.options.getSubcommand() === 'withdraw') {
-		let userRemove = await User.findOne({
+	}
+	else if (interaction.options.getSubcommand() === 'withdraw') {
+		const userRemove = await User.findOne({
 			where: {
 				discordUsername: {
-					[Op.eq]: interaction.user.username
-				}
-			}
+					[Op.eq]: interaction.user.username,
+				},
+			},
 		});
 		await userRemove.destroy();
 		await userRemove.save();
@@ -163,4 +172,4 @@ punishData.execute = async (interaction) => {
 	}
 };
 
-export { punishData }
+export { punishData };

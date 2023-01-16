@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 export const name = 'ready';
 export const once = true;

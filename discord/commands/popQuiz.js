@@ -1,10 +1,11 @@
-"use strict";
+'use strict';
 
-import { SlashCommandBuilder } from '@discordjs/builders'
-//import pkg from 'sequelize'
-//const { Sequelize, DataTypes, Op } = pkg;
-//import { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } from 'discord.js';
-//const quiz = require('./quiz.json');
+import { SlashCommandBuilder } from '@discordjs/builders';
+// import pkg from 'sequelize'
+// const { Sequelize, DataTypes, Op } = pkg;
+// import { MessageActionRow, MessageSelectMenu, Permissions, MessageEmbed } from 'discord.js';
+// const quiz = require('./quiz.json');
+import { default as quiz } from './quiz.js';
 
 const popQuizData = new SlashCommandBuilder()
 	.setName('popquiz')
@@ -18,16 +19,17 @@ const popQuizData = new SlashCommandBuilder()
 			.setRequired(false)));
 popQuizData.execute = async (interaction) => {
 	if (interaction.options.getSubcommand() === 'start') {
-		//const quizObj = JSON.parse(quiz);
+		const quizObj = JSON.parse(quiz);
 		const topic = interaction.options.getString('topic');
-		const questions = {};
+		// const questions = {};
 		if (topic) {
-			//get questions from specified topic
+			// get questions from specified topic
 			quizObj.topics.get(topic);
-		} else {
-			//get questions from random topic
+		}
+		else {
+			// get questions from random topic
 		}
 	}
 };
 
-export { popQuizData }
+export { popQuizData };
