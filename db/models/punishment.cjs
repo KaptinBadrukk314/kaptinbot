@@ -3,13 +3,12 @@
 // import pkg from 'sequelize';
 const { Sequelize, DataTypes } = require('sequelize');
 
-module.exports = {
-	'Punishment': null,
-}
+let Punishment;
 
 module.exports = {
-	'punishmentInit': (db) => {
-		if (Punishment == null) {
+	'Punishment': Punishment,
+	punishmentInit: (db) => {
+		if (!Punishment) {
 			Punishment = db.define('Punishment', {
 				id: {
 					type: DataTypes.UUID,

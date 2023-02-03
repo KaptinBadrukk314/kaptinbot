@@ -2,9 +2,11 @@
 
 // const fs = require('fs');
 
-require('dotenv').config();
+// require('dotenv').config();
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-import pkg from './db/db.cjs';
+import * as pkg from './db/db.cjs';
 const { dbConnect } = pkg;
 
 import { precompileHP } from './twitch/twitchController.js';
@@ -14,4 +16,3 @@ precompileHP();
 
 const db = dbConnect();
 
-db.close();

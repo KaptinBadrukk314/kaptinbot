@@ -5,16 +5,15 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 // import { User } from './user.cjs';
 // import { Punishment } from './punishment.cjs';
-const User = require('./user.cjs');
-const Punishment = require('./punishment.cjs');
+const { User } = require('./user.cjs');
+const { Punishment } = require('./punishment.cjs');
+
+let Vote;
 
 module.exports = {
-	'Vote': null,
-}
-
-module.exports = {
-	'voteInit': (db) => {
-		if (Vote != null) {
+	'Vote': Vote,
+	voteInit: (db) => {
+		if (!Vote) {
 			Vote = db.define('Vote', {
 				id:{
 					type: DataTypes.UUID,

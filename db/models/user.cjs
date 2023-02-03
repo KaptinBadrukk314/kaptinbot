@@ -3,12 +3,11 @@
 // import pkg from 'sequelize';
 const { Sequelize, DataTypes } = require('sequelize');
 
-module.exports = {
-	'User': null,
-}
+let User;
 
 module.exports = {
-	'userInit': (db) => {
+	'User': User,
+	userInit: async (db) => {
 		if (User == null) {
 			User = db.define('User', {
 				id: {

@@ -8,10 +8,13 @@ dotenv.config();
 // const { Client, Collection, Intents } = require('discord.js');
 import { Client, Collection, Intents } from 'discord.js';
 
-// imports for
+// imports for commands
 import { modData } from './commands/mod.js';
 import { popQuizData } from './commands/popQuiz.js';
 import { punishData } from './commands/punish.js';
+
+// imports for events
+import { readyData } from './events/ready.js';
 
 const clientDiscord = new Client({ intents: [Intents.FLAGS.GUILDS] });
 // const guildId = process.env.GUILD_ID;
@@ -28,15 +31,18 @@ clientDiscord.commands.set(punishData.name, punishData);
 
 
 // load events for discord
-for (const file of eventFiles) {
-	const event = require(`./discord/events/${file}`);
-	if (event.once) {
-		clientDiscord.once(event.name, (...args) => event.execute(...args));
-	}
-	else {
-		clientDiscord.on(event.name, (...args) => event.execute(...args));
-	}
-}
+// manually added for each command after ES6 refactor
+// for (const file of eventFiles) {
+// 	const event = require(`./discord/events/${file}`);
+// 	if (event.once) {
+// 		clientDiscord.once(event.name, (...args) => event.execute(...args));
+// 	}
+// 	else {
+// 		clientDiscord.on(event.name, (...args) => event.execute(...args));
+// 	}
+// }
+// above replaced with manual event list
+clientDiscord.once(readyData.name, (...args) => readyData.execute(...args));
 
 clientDiscord.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;

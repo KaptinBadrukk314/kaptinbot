@@ -1,46 +1,46 @@
-export default 
+export default
 {
-	"topics": [
+	'topics': [
 		{
-			"geometry":
+			'geometry':
 			{
-				"questions":[
+				'questions':[
 					{
-						"question":"",
-						"answers":[],
+						'question':'',
+						'answers':[],
 					},
 				],
 			},
 		},
 		{
-			"harry potter":
+			'harry potter':
 			{
-				"questions":[
+				'questions':[
 					{
-						"question":"",
-						"answers":[],
+						'question':'',
+						'answers':[],
 					},
 				],
 			},
 		},
 		{
-			"pokemon":
+			'pokemon':
 			{
-				"questions":[
+				'questions':[
 					{
-						"question":"",
-						"answers":[],
+						'question':'',
+						'answers':[],
 					},
 				],
 			},
 		},
 		{
-			"star wars":
+			'star wars':
 			{
-				"questions":[
+				'questions':[
 					{
-						"question":"",
-						"answers":[],
+						'question':'',
+						'answers':[],
 					},
 				],
 			},

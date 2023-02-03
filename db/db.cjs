@@ -24,14 +24,14 @@ const { Punishment, punishmentInit } = require('./models/punishment.cjs');
 const { Vote, voteInit } = require('./models/vote.cjs');
 
 module.exports = {
-	'dbConnect()': async () => {
+	dbConnect: async () => {
 		try {
 			await db.authenticate();
-			console.log('Connection has been established successfully to database.');
-			userInit(db);
-			punishmentInit(db);
-			voteInit(db);
+			await userInit(db);
+			await punishmentInit(db);
+			await voteInit(db);
 			await db.sync();
+			console.log('Connection has been established successfully to database.');
 			return db;
 		}
 		catch (error) {
