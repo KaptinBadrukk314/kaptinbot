@@ -4,9 +4,8 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import pkg from 'sequelize';
 const { Op } = pkg;
 import { MessageActionRow, MessageSelectMenu, MessageEmbed } from 'discord.js';
-import { Punishment } from '../../db/models/punishment.cjs';
-import { User } from '../../db/models/user.cjs';
-import { Vote } from '../../db/models/vote.cjs';
+import pkg1 from '../../db/db.cjs';
+const { Punishment, User, Vote } = pkg1;
 
 
 const punishData = new SlashCommandBuilder()
@@ -38,9 +37,6 @@ const punishData = new SlashCommandBuilder()
 		.setDescription('Withdraw from the Punishment Wheel'));
 
 punishData.execute = async (interaction) => {
-	// const User = require('../db/models/user')(db);
-	// const Punishment = require('../db/models/punishment')(db);
-	// const Vote = require('../db/models/vote')(db);
 	if (interaction.options.getSubcommand() === 'agree') {
 		let temp = await User.findOne({
 			where: {
@@ -51,16 +47,18 @@ punishData.execute = async (interaction) => {
 		});
 		if (!temp) {
 			temp = await User.build({ discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
+			await interaction.reply({ content: 'You are now signed up for punishment.', ephemeral: true });
 		}
 		else if (temp.discordUsername && temp.twitchUsername) {
 			await interaction.reply({ content: 'You are all set to participate in the punishment wheel.', ephemeral: true });
 		}
 		else {
 			temp.twitchUsername = interaction.options.getString('twitchusername');
+			await interaction.reply({ content: 'twitchusername updated', ephemeral: true });
 		}
 		console.log(temp);
 		await temp.save();
-		await interaction.reply({ content: 'Thank you for signing up for punishment.', ephemeral: true });
+		await interaction.followUp({ content: 'Thank you for signing up for punishment.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'add') {
 		let temp = await Punishment.findOne({
@@ -77,7 +75,7 @@ punishData.execute = async (interaction) => {
 			await interaction.reply({ content: 'That name already exists in our database. Please resubmit with a unique name.', ephemeral: true });
 		}
 		await temp.save();
-		await interaction.reply({ content: 'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true });
+		await interaction.followUp({ content: 'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'view') {
 		const temp = await Punishment.findAll();

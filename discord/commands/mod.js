@@ -3,9 +3,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 // import pkg from 'sequelize'
 // const Punishment = require('../db/models/punishment')(db);
-import { Punishment } from '../../db/models/punishment.cjs';
-// const { Sequelize, DataTypes } = pkg;
-// import { MessageActionRow, MessageSelectMenu, Permissions } from 'discord.js';
+// import { Punishment } from '../../db/models/punishment.cjs';
+import pkg from '../../db/db.cjs';
+const { Punishment } = pkg;
+
 
 
 const modData = new SlashCommandBuilder()
