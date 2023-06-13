@@ -1,0 +1,14 @@
+I"z<h2 id="no-context-harry-potter">No Context Harry Potter</h2>
+<p>Posts random line from Harry Potter book 1</p>
+
+<h3 id="use">Use</h3>
+<ul>
+  <li>!nchp</li>
+  <li>!NoContextHP</li>
+  <li>!nocontexthp</li>
+  <li>!NCHP</li>
+</ul>
+
+<h3 id="expected-behavior">Expected behavior</h3>
+<p>Posts message in Twitch chat of a random line from Harry Potter and the Philosophers Stone.</p>
+:ET

@@ -1,0 +1,13 @@
+I"c<h2 id="trick-or-treat">Trick or Treat</h2>
+<p>A Halloween themed command available only during October.</p>
+
+<h3 id="use">Use</h3>
+<ul>
+  <li>!trickortreat @user</li>
+  <li>!TrickOrTreat @user</li>
+  <li>!tot @user</li>
+</ul>
+
+<h3 id="expected-behavior">Expected behavior</h3>
+<p>Posts message in Twitch chat tricking or treating the specified user.</p>
+:ET
