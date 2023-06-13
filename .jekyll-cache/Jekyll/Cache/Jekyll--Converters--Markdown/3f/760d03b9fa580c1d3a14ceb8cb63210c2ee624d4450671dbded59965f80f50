@@ -1,0 +1,62 @@
+I"‡<details open="">
+  <summary class="text-delta">
+    Table of contents
+  </summary>
+<ol id="markdown-toc">
+  <li><a href="#base-command" id="markdown-toc-base-command">Base Command</a></li>
+  <li><a href="#punish-agree" id="markdown-toc-punish-agree">Punish Agree</a>    <ol>
+      <li><a href="#use" id="markdown-toc-use">Use</a></li>
+      <li><a href="#prerequisite" id="markdown-toc-prerequisite">Prerequisite</a></li>
+      <li><a href="#expected-behavior" id="markdown-toc-expected-behavior">Expected Behavior</a></li>
+    </ol>
+  </li>
+  <li><a href="#punish-withdraw" id="markdown-toc-punish-withdraw">Punish Withdraw</a>    <ol>
+      <li><a href="#use-1" id="markdown-toc-use-1">Use</a></li>
+      <li><a href="#prerequisite-1" id="markdown-toc-prerequisite-1">Prerequisite</a></li>
+      <li><a href="#expected-behavior-1" id="markdown-toc-expected-behavior-1">Expected Behavior</a></li>
+    </ol>
+  </li>
+</ol>
+
+</details>
+
+<p>Home for Punishment Wheel Twitch commandsâ€¦</p>
+
+<h2 id="base-command">Base Command</h2>
+<ul>
+  <li>!punish</li>
+  <li>!spin</li>
+</ul>
+
+<p>NOTE: spin is used only for spinning the wheel and none of the subcommands</p>
+
+<h2 id="punish-agree">Punish Agree</h2>
+
+<p>Agree to join the Punishment Wheel.</p>
+
+<h3 id="use">Use</h3>
+<ul>
+  <li>!punish agree @discordUsername</li>
+</ul>
+
+<h3 id="prerequisite">Prerequisite</h3>
+<p>Not currently signed up for the Punishment Wheel.</p>
+
+<h3 id="expected-behavior">Expected Behavior</h3>
+<p>Responds to let you know you have been signed up for the Punishment Wheel.</p>
+
+<h2 id="punish-withdraw">Punish Withdraw</h2>
+
+<p>Withdraw from the Punishment Wheel.</p>
+
+<h3 id="use-1">Use</h3>
+<ul>
+  <li>!punish withdraw</li>
+</ul>
+
+<h3 id="prerequisite-1">Prerequisite</h3>
+<p>Signed up for the Punishment Wheel.</p>
+
+<h3 id="expected-behavior-1">Expected Behavior</h3>
+<p>Responds to let you know you have been signed up for the Punishment Wheel.</p>
+:ET

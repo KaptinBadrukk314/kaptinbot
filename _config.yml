@@ -11,6 +11,8 @@ ga_tracking_anonymize_ip: true
 
 remote-theme: just-the-docs/just-the-docs
 
+source: "docs"
+destination: "docs/_site"
 base-url: "/kaptinbot"
 url: "https://kaptinbadrukk314.github.io"
 
