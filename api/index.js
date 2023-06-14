@@ -44,7 +44,7 @@ app.get('/user/:discordUsername', discordLoadId, (req, res) => {
 	res.status(200).send({ userId: req.user.id , user: req.user});
 });
 
-app.get('/user/:name', async (req, res) => {
+app.get('/user', async (req, res) => {
 	// get user id
 	let user = await User.findOne({
 		where: {
@@ -56,14 +56,14 @@ app.get('/user/:name', async (req, res) => {
 	res.status(200).send({ user: user.toJSON(), userId: user.id });
 });
 
-app.post('/user/new/:discordUsername/:twitchUsername', async (req, res) => {
+app.post('/user/new/', async (req, res) => {
 	// build new user
 	let user = User.build({ discordUsername: req.discordUsername, twitchUsername: req.twitchUsername });
 	await user.save();
 	res.status(200).send({ user: user.toJSON() });
 });
 
-app.post('/user/:discordUsername/:twitchUsername', async (req, res) => {
+app.post('/user/:discordUsername', async (req, res) => {
 	// update twitch username
 	let user = await User.findOne({
 		where: {
@@ -72,10 +72,12 @@ app.post('/user/:discordUsername/:twitchUsername', async (req, res) => {
 			},
 		},
 	});
+	user.twitchUsername = req.twitchUsername;
+	await user.save();
 	res.status(200).send({ user: user.toJSON() });
 });
 
-app.delete('/user/:id', async (req, res) => {
+app.delete('/user/delete', async (req, res) => {
 	// delete user by id
 	const userRemove = await User.findOne({
 		where: {
@@ -84,7 +86,7 @@ app.delete('/user/:id', async (req, res) => {
 			},
 		},
 	});
-	if (userRemove){
+	if (userRemove) {
 		await userRemove.destroy();
 		await userRemove.save();
 		res.status(200).send({text:'User deleted', user: userRemove.toJSON()});
@@ -115,7 +117,7 @@ app.get('/punish/:id', async (req, res) => {
 
 app.get('/punish/:name', async (req, res) => {
 	// get punishment by name
-	let punishment = await Punishment.findOne({
+	const punishment = await Punishment.findOne({
 		where: {
 			name: {
 				[Op.eq]: req.name,
@@ -125,7 +127,7 @@ app.get('/punish/:name', async (req, res) => {
 	res.status(200).send({ punishment: punishment.toJSON() });
 });
 
-app.post('/punish/:name/:description', async (req, res) => {
+app.post('/punish/new', async (req, res) => {
 	// build new punishment
 	let punishment = await Punishment.findOne({
 		where: {
@@ -155,11 +157,11 @@ app.post('/punish/:name', async (req, res) => {
 	});
 	punishId.voteCount += 1;
 	await punishId.save();
-	res.status(200).send({punishment: punishId.toJSON() });
+	res.status(200).send({ punishment: punishId.toJSON() });
 });
 
-app.post('/punish/:name/override', async (req, res) => {
-	// mod control to override 
+app.post('/punish/override/', async (req, res) => {
+	// mod control to override
 	const punishment = await Punishment.findOne({
 		where: {
 			name: req.punishName,
@@ -168,14 +170,14 @@ app.post('/punish/:name/override', async (req, res) => {
 	if (punishment) {
 		punishment.modActivate = !punishment.modActivate;
 		await punishment.save();
-		res.status(200).send({vote: punishment.toJSON() });
+		res.status(200).send({ vote: punishment.toJSON() });
 	}
 	else {
 		res.status(400).send('No punishment by that name');
 	}
 });
 
-app.delete('/punish/:name', async (req, res) => {
+app.delete('/punish/delete', async (req, res) => {
 	// delete punishment
 	const punishment = await Punishment.findOne({
 		where: {
@@ -210,17 +212,16 @@ app.get('/vote/:punishName', async (req, res) => {
 	catch (err) {
 		res.status(404).send('Punishment doesn\'t exist');
 	}
-	
 });
 
-app.post('/vote/:punishId/:userId', async (req, res) => {
+app.post('/vote/new', async (req, res) => {
 	// create new vote
-	let vote = Vote.build({ userId: req.userId, punishmentId: req.punishId });
+	const vote = Vote.build({ userId: req.userId, punishmentId: req.punishId });
 	await vote.save();
 	res.status(200).send({ vote: vote });
 });
 
-if (module.children){
+if (module.children) {
 	app.listen(3000);
 	console.log('Express started on port 3000');
 }
