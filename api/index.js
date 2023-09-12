@@ -5,12 +5,12 @@ import { dbConnect, User, Punishment, Vote } from '../db/db.cjs';
 import pkg from 'sequelize';
 const { Op } = pkg;
 
-let app = express();
+const app = express();
 
-let db = await dbConnect();
+await dbConnect();
 
 async function twitchLoadId(req, res, next) {
-	let user = await User.findOne({
+	const user = await User.findOne({
 		where: {
 			twitchUsername: {
 				[Op.eq]:  req.twitchUsername,
@@ -22,7 +22,7 @@ async function twitchLoadId(req, res, next) {
 }
 
 async function discordLoadId(req, res, next) {
-	let user = await User.findOne({
+	const user = await User.findOne({
 		where: {
 			discordUsername: {
 				[Op.eq]:  req.discordUsername,
@@ -36,17 +36,17 @@ async function discordLoadId(req, res, next) {
 // user routes
 app.get('/user/:twitchUsername', twitchLoadId, (req, res) => {
 	// get user id via twitchUsername
-	res.status(200).send({ userId: req.user.id , user: req.user});
+	res.status(200).send({ userId: req.user.id, user: req.user });
 });
 
 app.get('/user/:discordUsername', discordLoadId, (req, res) => {
 	// get user id via discordUsername
-	res.status(200).send({ userId: req.user.id , user: req.user});
+	res.status(200).send({ userId: req.user.id, user: req.user });
 });
 
 app.get('/user', async (req, res) => {
 	// get user id
-	let user = await User.findOne({
+	const user = await User.findOne({
 		where: {
 			name: {
 				[Op.eq]: req.name,
@@ -58,14 +58,14 @@ app.get('/user', async (req, res) => {
 
 app.post('/user/new/', async (req, res) => {
 	// build new user
-	let user = User.build({ discordUsername: req.discordUsername, twitchUsername: req.twitchUsername });
+	const user = User.build({ discordUsername: req.discordUsername, twitchUsername: req.twitchUsername });
 	await user.save();
 	res.status(200).send({ user: user.toJSON() });
 });
 
 app.post('/user/:discordUsername', async (req, res) => {
 	// update twitch username
-	let user = await User.findOne({
+	const user = await User.findOne({
 		where: {
 			discordUsername: {
 				[Op.eq]: req.discordUsername,
@@ -89,7 +89,7 @@ app.delete('/user/delete', async (req, res) => {
 	if (userRemove) {
 		await userRemove.destroy();
 		await userRemove.save();
-		res.status(200).send({text:'User deleted', user: userRemove.toJSON()});
+		res.status(200).send({ text:'User deleted', user: userRemove.toJSON() });
 	}
 	else {
 		res.status(400).send('User doesn\'t exist to delete');
@@ -100,7 +100,7 @@ app.delete('/user/delete', async (req, res) => {
 app.get('/punish', async (req, res) => {
 	// get all punishments
 	const punishments = await Punishment.findAll();
-	res.status(200).send({punishments: punishments.toJSON() });
+	res.status(200).send({ punishments: punishments.toJSON() });
 });
 
 app.get('/punish/:id', async (req, res) => {
@@ -112,7 +112,7 @@ app.get('/punish/:id', async (req, res) => {
 			},
 		},
 	});
-	res.status(200).send({punish: punishId.toJSON() });
+	res.status(200).send({ punish: punishId.toJSON() });
 });
 
 app.get('/punish/:name', async (req, res) => {

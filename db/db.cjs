@@ -10,7 +10,7 @@ const db = new Sequelize({
 	storage: 'mcdata.sqlite',
 });
 
-async function dbConnect(){
+async function dbConnect() {
 	try {
 		User.init({
 			id: {

@@ -6,5 +6,5 @@ const { Model } = require('sequelize');
 class Vote extends Model {}
 
 module.exports = {
-	Vote: Vote
-}
+	Vote: Vote,
+};
