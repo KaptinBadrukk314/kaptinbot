@@ -9,70 +9,72 @@ const app = express();
 
 await dbConnect();
 
-async function twitchLoadId(req, res, next) {
+// user routes
+app.get('/user/twitch/:twitchUsername', async (req, res) => {
+	// get user id via twitchUsername
 	const user = await User.findOne({
 		where: {
 			twitchUsername: {
-				[Op.eq]:  req.twitchUsername,
+				[Op.eq]:  req.query.twitchUsername,
 			},
 		},
 	});
-	req.user = user;
-	next();
-}
+	res.status(200).send({ userId: user, user: user });
+});
 
-async function discordLoadId(req, res, next) {
+app.get('/user/discord/:discordUsername', async (req, res) => {
+	// get user id via discordUsername
+	console.log(req.query);
 	const user = await User.findOne({
 		where: {
 			discordUsername: {
-				[Op.eq]:  req.discordUsername,
+				[Op.eq]:  req.query.discordUsername,
 			},
 		},
 	});
-	req.user = user;
-	next();
-}
-
-// user routes
-app.get('/user/:twitchUsername', twitchLoadId, (req, res) => {
-	// get user id via twitchUsername
-	res.status(200).send({ userId: req.user.id, user: req.user });
+	console.log(user);
+	if (user) {
+		res.status(200).send({ userId: user, user: user });
+	}
+	else {
+		res.status(400).send('Discord Username not found');
+	}
 });
 
-app.get('/user/:discordUsername', discordLoadId, (req, res) => {
-	// get user id via discordUsername
-	res.status(200).send({ userId: req.user.id, user: req.user });
+app.get('/user/all', async (req, res) => {
+	const users = await User.findAll();
+	res.status(200).send({ users: JSON.stringify(users) });
 });
 
-app.get('/user', async (req, res) => {
-	// get user id
-	const user = await User.findOne({
-		where: {
-			name: {
-				[Op.eq]: req.name,
-			},
-		},
-	});
-	res.status(200).send({ user: user.toJSON(), userId: user.id });
-});
+// app.get('/user/:name', async (req, res) => {
+// 	// get user id
+// 	const user = await User.findOne({
+// 		where: {
+// 			discordUsername: {
+// 				[Op.eq]: req.query.name,
+// 			},
+// 		},
+// 	});
+// 	res.status(200).send({ user: user.toJSON(), userId: user.id });
+// });
 
 app.post('/user/new/', async (req, res) => {
 	// build new user
-	const user = User.build({ discordUsername: req.discordUsername, twitchUsername: req.twitchUsername });
+	const user = User.build({ discordUsername: req.query.discordUsername, twitchUsername: req.query.twitchUsername });
 	await user.save();
 	res.status(200).send({ user: user.toJSON() });
 });
 
-app.post('/user/:discordUsername', async (req, res) => {
+app.put('/user/:discordUsername', async (req, res) => {
 	// update twitch username
 	const user = await User.findOne({
 		where: {
 			discordUsername: {
-				[Op.eq]: req.discordUsername,
+				[Op.eq]: req.query.discordUsername,
 			},
 		},
 	});
-	user.twitchUsername = req.twitchUsername;
+	user.twitchUsername = req.query.twitchUsername;
 	await user.save();
 	res.status(200).send({ user: user.toJSON() });
 });
@@ -82,7 +84,7 @@ app.delete('/user/delete', async (req, res) => {
 	const userRemove = await User.findOne({
 		where: {
 			id: {
-				[Op.eq]: req.id,
+				[Op.eq]: req.query.id,
 			},
 		},
 	});
@@ -97,7 +99,7 @@ app.delete('/user/delete', async (req, res) => {
 });
 
 // punishment routes
-app.get('/punish', async (req, res) => {
+app.get('/punish/all', async (req, res) => {
 	// get all punishments
 	const punishments = await Punishment.findAll();
 	res.status(200).send({ punishments: punishments.toJSON() });
@@ -108,7 +110,7 @@ app.get('/punish/:id', async (req, res) => {
 	const punishId = await Punishment.findOne({
 		where: {
 			id: {
-				[Op.eq]: req.id,
+				[Op.eq]: req.query.id,
 			},
 		},
 	});
@@ -120,7 +122,7 @@ app.get('/punish/:name', async (req, res) => {
 	const punishment = await Punishment.findOne({
 		where: {
 			name: {
-				[Op.eq]: req.name,
+				[Op.eq]: req.query.name,
 			},
 		},
 	});
@@ -132,12 +134,12 @@ app.post('/punish/new', async (req, res) => {
 	let punishment = await Punishment.findOne({
 		where: {
 			name: {
-				[Op.eq]: req.name,
+				[Op.eq]: req.query.name,
 			},
 		},
 	});
 	if (!punishment) {
-		punishment = Punishment.build({ name: req.name, description: req.description });
+		punishment = Punishment.build({ name: req.query.name, description: req.query.description });
 		await punishment.save();
 		res.status(200).send({ punishment: punishment.toJSON() });
 	}
@@ -151,7 +153,7 @@ app.post('/punish/:name', async (req, res) => {
 	const punishId = await Punishment.findOne({
 		where: {
 			name: {
-				[Op.eq]: req.name,
+				[Op.eq]: req.query.name,
 			},
 		},
 	});
@@ -164,7 +166,7 @@ app.post('/punish/override/', async (req, res) => {
 	// mod control to override
 	const punishment = await Punishment.findOne({
 		where: {
-			name: req.punishName,
+			name: req.query.punishName,
 		},
 	});
 	if (punishment) {
@@ -181,7 +183,7 @@ app.delete('/punish/delete', async (req, res) => {
 	// delete punishment
 	const punishment = await Punishment.findOne({
 		where: {
-			name: req.name,
+			name: req.query.name,
 		},
 	});
 	if (punishment) {
@@ -196,18 +198,18 @@ app.delete('/punish/delete', async (req, res) => {
 
 // vote routes
 app.get('/vote/:punishName', async (req, res) => {
-	// get vote if it exists
+	// get votes if it exists
 	try {
-		const vote = await Vote.findAll({
+		const votes = await Vote.findAll({
 			where: {
 				id: await Punishment.findOne({
 					where: {
-						name: req.punishName,
+						name: req.query.punishName,
 					},
 				}),
 			},
 		});
-		res.status(200).send({ vote: vote });
+		res.status(200).send({ votes: JSON.stringify(votes) });
 	}
 	catch (err) {
 		res.status(404).send('Punishment doesn\'t exist');
@@ -216,12 +218,11 @@ app.get('/vote/:punishName', async (req, res) => {
 
 app.post('/vote/new', async (req, res) => {
 	// create new vote
-	const vote = Vote.build({ userId: req.userId, punishmentId: req.punishId });
+	const vote = Vote.build({ userId: req.query.userId, punishmentId: req.query.punishId });
 	await vote.save();
 	res.status(200).send({ vote: vote });
 });
 
-if (module.children) {
-	app.listen(3000);
-	console.log('Express started on port 3000');
-}
+
+app.listen(3000);
+console.log('Express started on port 3000');

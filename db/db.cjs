@@ -21,7 +21,7 @@ async function dbConnect() {
 			},
 			discordUsername:{
 				type: DataTypes.STRING,
-				allowNull: true,
+				allowNull: false,
 			},
 			twitchUsername:{
 				type: DataTypes.STRING,
