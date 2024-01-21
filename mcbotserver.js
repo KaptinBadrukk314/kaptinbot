@@ -14,5 +14,5 @@ import { precompileHP } from './twitch/twitchController.js';
 
 precompileHP();
 
-const db = dbConnect();
+dbConnect();
 

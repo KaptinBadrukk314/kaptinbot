@@ -1,6 +1,6 @@
 'use strict';
 
-import * as fs from 'fs';
+// import * as fs from 'fs';
 // require('dotenv').config();
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -19,7 +19,7 @@ import { readyData } from './events/ready.js';
 const clientDiscord = new Client({ intents: [Intents.FLAGS.GUILDS] });
 // const guildId = process.env.GUILD_ID;
 
-const eventFiles = fs.readdirSync('./discord/events').filter(file => file.endsWith('.js'));
+// const eventFiles = fs.readdirSync('./discord/events').filter(file => file.endsWith('.js'));
 
 clientDiscord.commands = new Collection();
 
