@@ -60,6 +60,14 @@ async function dbConnect() {
 					this.setDataValue('activeFlg', value);
 				},
 			},
+			modActive:{
+				type: DataTypes.BOOLEAN,
+				allowNull: false,
+				defaultValue: false,
+				set(value) {
+					this.setDataValue('modActive', value);
+				},
+			},
 		}, { sequelize: db });
 		Vote.init({
 			id:{
