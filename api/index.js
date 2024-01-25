@@ -87,7 +87,7 @@ app.delete('/user/delete', async (req, res) => {
 		res.status(200).send({ text:'User deleted', user: userRemove.toJSON() });
 	}
 	else {
-		res.status(400).send('User doesn\'t exist to delete');
+		res.status(404).send('User doesn\'t exist to delete');
 	}
 });
 
