@@ -42,7 +42,7 @@ app.get('/user/discord/:discordUsername', async (req, res) => {
 		res.status(200).send({ userId: user.id, user: user });
 	}
 	else {
-		res.status(400).send('Discord Username not found');
+		res.status(404).send('Discord Username not found');
 	}
 });
 
@@ -54,8 +54,13 @@ app.get('/user/all', async (req, res) => {
 app.post('/user/new/', async (req, res) => {
 	// build new user
 	const user = User.build({ discordUsername: req.query.discordUsername, twitchUsername: req.query.twitchUsername });
-	await user.save();
-	res.status(200).send({ user: user.toJSON() });
+	try {
+		await user.save();
+		res.status(200).send({ user: user.toJSON() });
+	}
+	catch (err) {
+		res.status(403).send('Discord or Twitch username already registered.');
+	}
 });
 
 app.put('/user/update/:discordUsername', async (req, res) => {
@@ -68,8 +73,13 @@ app.put('/user/update/:discordUsername', async (req, res) => {
 		},
 	});
 	user.twitchUsername = req.query.twitchUsername;
-	await user.save();
-	res.status(200).send({ user: user.toJSON() });
+	try {
+		await user.save();
+		res.status(200).send({ user: user.toJSON() });
+	}
+	catch (err) {
+		res.status(404).send('Discord Username not found.');
+	}
 });
 
 app.delete('/user/delete', async (req, res) => {
@@ -152,7 +162,7 @@ app.post('/punish/new', async (req, res) => {
 		res.status(200).send({ punishment: punishment.toJSON() });
 	}
 	else {
-		res.status(202).send({ content: 'That name already exists in our database. Please resubmit with a unique name.' });
+		res.status(403).send({ content: 'That name already exists in our database. Please resubmit with a unique name.' });
 	}
 });
 
@@ -253,6 +263,12 @@ app.get('/vote/all/name', async (req, res) => {
 	catch (err) {
 		res.status(404).send({ content: 'Punishment doesn\'t exist', err: err });
 	}
+});
+
+app.get('/vote/all', async (req, res) => {
+	// get all votes
+	const votes = await Vote.findAll();
+	res.status(200).send({ votes: JSON.stringify(votes) });
 });
 
 app.post('/vote/new', async (req, res) => {
