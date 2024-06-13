@@ -1,11 +1,6 @@
 'use strict';
-// const { SlashCommandBuilder }= require('@discordjs/builders');
+
 import { SlashCommandBuilder } from '@discordjs/builders';
-// import pkg from 'sequelize'
-// const Punishment = require('../db/models/punishment')(db);
-// import { Punishment } from '../../db/models/punishment.cjs';
-import pkg from '../../db/db.cjs';
-const { Punishment } = pkg;
 
 const modData = new SlashCommandBuilder()
 	.setName('mod')
@@ -24,15 +19,16 @@ const modData = new SlashCommandBuilder()
 			.setRequired(true)))
 	.setDefaultPermission(false);
 
-modData.execute = async (interaction) => {
+modData.execute = async (interaction, axiosInst) => {
 	if (interaction.options.getSubcommand() === 'remove') {
 		const beRemoved = interaction.options.getString('name');
 		// TODO: change to use api
-		const temp = await Punishment.findOne({
-			where: {
-				name: beRemoved,
-			},
-		});
+		// const temp = await Punishment.findOne({
+		// 	where: {
+		// 		name: beRemoved,
+		// 	},
+		// });
+		const temp = await axiosInst.get('/punish', { name: beRemoved });
 		if (temp) {
 			await temp.destroy();
 			await temp.save();
@@ -45,11 +41,12 @@ modData.execute = async (interaction) => {
 	else if (interaction.options.getSubcommand() === 'activetoggle') {
 		const beActivated = interaction.options.getString('name');
 		// TODO: change to use api
-		const temp = await Punishment.findOne({
-			where: {
-				name: beActivated,
-			},
-		});
+		// const temp = await Punishment.findOne({
+		// 	where: {
+		// 		name: beActivated,
+		// 	},
+		// });
+		const temp = await axiosInst.get('/punish', { name: beActivated });
 		if (temp) {
 			temp.modActivate = !temp.modActivate;
 			await temp.save();
