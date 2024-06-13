@@ -38,6 +38,7 @@ const punishData = new SlashCommandBuilder()
 
 punishData.execute = async (interaction) => {
 	if (interaction.options.getSubcommand() === 'agree') {
+		// TODO: change to use api
 		let temp = await User.findOne({
 			where: {
 				discordUsername: {
@@ -46,6 +47,7 @@ punishData.execute = async (interaction) => {
 			},
 		});
 		if (!temp) {
+			// TODO: change to use api
 			temp = await User.build({ discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
 			await interaction.reply({ content: 'You are now signed up for punishment.', ephemeral: true });
 		}
@@ -61,6 +63,7 @@ punishData.execute = async (interaction) => {
 		await interaction.followUp({ content: 'Thank you for signing up for punishment.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'add') {
+		// TODO: change to use api
 		let temp = await Punishment.findOne({
 			where: {
 				name: {
@@ -69,6 +72,7 @@ punishData.execute = async (interaction) => {
 			},
 		});
 		if (!temp) {
+			// TODO: change to use api
 			temp = await Punishment.build({ name: interaction.options.getString('name'), description: interaction.options.getString('description') });
 		}
 		else {
@@ -78,6 +82,7 @@ punishData.execute = async (interaction) => {
 		await interaction.followUp({ content: 'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'view') {
+		// TODO: change to use api
 		const temp = await Punishment.findAll();
 		let punishments = 'Name---Description---Vote Count---Active\n';
 		temp.forEach((item) => {
@@ -92,6 +97,7 @@ punishData.execute = async (interaction) => {
 		await interaction.reply({ embeds: [embed] });
 	}
 	else if (interaction.options.getSubcommand() === 'vote') {
+		// TODO: change to use api
 		const temp = await Punishment.findAll();
 		console.log(temp);
 		if (temp.length > 0) {
@@ -120,6 +126,7 @@ punishData.execute = async (interaction) => {
 			const collector = interaction.channel.createMessageComponentCollector({ filter });
 
 			collector.on('collect', async (collected) => {
+				// TODO: change to use api
 				const userVoteId = await User.findOne({
 					where: {
 						discordUsername: {
@@ -127,11 +134,10 @@ punishData.execute = async (interaction) => {
 						},
 					},
 				});
-				// console.log(collected);
-				// console.log(userVoteId.id);
 				collected.values.forEach(async (item) => {
 					try {
 						await collected.deferUpdate();
+						// TODO: change to use api
 						const newVote = await Vote.build({ userId: userVoteId.id, punishmentId: item });
 						const punishId = await Punishment.findOne({
 							where: {
@@ -157,6 +163,7 @@ punishData.execute = async (interaction) => {
 		}
 	}
 	else if (interaction.options.getSubcommand() === 'withdraw') {
+		// TODO: change to use api
 		const userRemove = await User.findOne({
 			where: {
 				discordUsername: {

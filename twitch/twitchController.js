@@ -1,8 +1,6 @@
 'use strict';
 
-// const tmi = require('tmi.js');
 import tmi from 'tmi.js';
-// require('dotenv').config();
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -72,6 +70,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 			clientTwitch.say(channel, `${userstate['display-name']}, you must be signed up for the punishment wheel in order to spin.`);
 			return;
 		}
+		// TODO: change to use api
 		const users = await User.findAll();
 		const punishments = await Punishment.findAll();
 		if (punishments.length == 0) {
@@ -88,6 +87,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 		clientTwitch.say(channel, `${user} has to endure ${punishment}`);
 	}
 	if (commandName.startsWith('!punish agree')) {
+		// TODO: change to use api
 		const temp = User.findOne({
 			where: {
 				twitchUsername:{
@@ -112,6 +112,7 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 		await temp.save();
 	}
 	if (commandName.startsWith('!punish withdraw')) {
+		// TODO: change to use api
 		const temp = await User.findOne({
 			where: {
 				twitchUsername:{

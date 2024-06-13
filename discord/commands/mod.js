@@ -7,8 +7,6 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import pkg from '../../db/db.cjs';
 const { Punishment } = pkg;
 
-
-
 const modData = new SlashCommandBuilder()
 	.setName('mod')
 	.setDescription('Moderator commands for moderating things.')
@@ -29,6 +27,7 @@ const modData = new SlashCommandBuilder()
 modData.execute = async (interaction) => {
 	if (interaction.options.getSubcommand() === 'remove') {
 		const beRemoved = interaction.options.getString('name');
+		// TODO: change to use api
 		const temp = await Punishment.findOne({
 			where: {
 				name: beRemoved,
@@ -45,6 +44,7 @@ modData.execute = async (interaction) => {
 	}
 	else if (interaction.options.getSubcommand() === 'activetoggle') {
 		const beActivated = interaction.options.getString('name');
+		// TODO: change to use api
 		const temp = await Punishment.findOne({
 			where: {
 				name: beActivated,
