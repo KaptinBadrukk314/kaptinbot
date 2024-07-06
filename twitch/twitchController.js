@@ -1,21 +1,10 @@
 'use strict';
 
-// const tmi = require('tmi.js');
 import tmi from 'tmi.js';
-// require('dotenv').config();
 import * as dotenv from 'dotenv';
 dotenv.config();
-
-import pkg from 'sequelize';
-const { Op } = pkg;
-
-import pkg1 from '../db/models/user.cjs';
-const { User } = pkg1;
-import pkg2 from '../db/models/punishment.cjs';
-const { Punishment } = pkg2;
-// import { Vote } from '../db/models/vote.js';
 import * as fs from 'fs';
-import { clientDiscord } from '../discord/discordController.js';
+import { axiosInst, clientDiscord } from '../discord/discordController.js';
 
 const opts = {
 	identity: {
@@ -28,6 +17,7 @@ const opts = {
 };
 
 let potterBook1 = null;
+let axios = null;
 
 const clientTwitch = new tmi.client(opts);
 
@@ -44,9 +34,6 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 		const arr = message.trim().split(' ');
 		const user = arr.filter(trickHelper);
 		const num = Math.floor(Math.random() * 2);
-		console.log(user);
-		console.log(arr);
-		console.log(num);
 		if (num == 1) {
 			// treat
 			clientTwitch.say(channel, `${userstate['display-name']} gave a treat to ${user}`);
@@ -59,21 +46,24 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 		clientTwitch.say(channel, `${userstate['display-name']}'s Harry Potter Quote: ${generateHPQuote()}`);
 	}
 	if (commandName.startsWith('!spin') || commandName.startsWith('!punish')) {
-		const check = await User.findOne({
-			where: {
-				twitchUsername:{
-					[Op.eq]: userstate['display-name'],
-				},
-			},
-		});
-		console.log(check);
-		console.log(userstate);
+		// TODO: change to use api
+		// const check = await User.findOne({
+		// 	where: {
+		// 		twitchUsername:{
+		// 			[Op.eq]: userstate['display-name'],
+		// 		},
+		// 	},
+		// });
+		const check = await axiosInst.get('/user/twitch/', { twitchUsername: userstate['display-name'] });
 		if (!check || !check.twitchUsername) {
 			clientTwitch.say(channel, `${userstate['display-name']}, you must be signed up for the punishment wheel in order to spin.`);
 			return;
 		}
-		const users = await User.findAll();
-		const punishments = await Punishment.findAll();
+		// TODO: change to use api
+		// const users = await User.findAll();
+		const users = await axiosInst.get('/user/all');
+		// const punishments = await Punishment.findAll();
+		const punishments = await axiosInst.get('/punish/all');
 		if (punishments.length == 0) {
 			clientTwitch.say(channel, 'There are no punishments currently active. Please go to the discord and vote for the punishments you would like to be active.');
 			return;
@@ -81,20 +71,18 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 
 		const user = users[Math.floor(Math.random() * users.length)].twitchUsername;
 		const punishment = punishments[Math.floor(Math.random() * punishments.length)].description;
-		console.log(users);
-		console.log(punishments);
-		console.log(user);
-		console.log(punishment);
 		clientTwitch.say(channel, `${user} has to endure ${punishment}`);
 	}
 	if (commandName.startsWith('!punish agree')) {
-		const temp = User.findOne({
-			where: {
-				twitchUsername:{
-					[Op.eq]: userstate['display-name'],
-				},
-			},
-		});
+		// TODO: change to use api
+		// const temp = User.findOne({
+		// 	where: {
+		// 		twitchUsername:{
+		// 			[Op.eq]: userstate['display-name'],
+		// 		},
+		// 	},
+		// });
+		const temp = await axiosInst.get('/user/twitch/', { twitchUsername: userstate['display-name'] });
 		if (temp.twitchUsername && temp.discordUsername) {
 			clientTwitch.say(channel, `${userstate['display-name']}, you are all set with the punishment wheel.`);
 		}
@@ -112,13 +100,15 @@ clientTwitch.on('message', async (channel, userstate, message, self) => {
 		await temp.save();
 	}
 	if (commandName.startsWith('!punish withdraw')) {
-		const temp = await User.findOne({
-			where: {
-				twitchUsername:{
-					[Op.eq]: userstate['display-name'],
-				},
-			},
-		});
+		// TODO: change to use api
+		// const temp = await User.findOne({
+		// 	where: {
+		// 		twitchUsername:{
+		// 			[Op.eq]: userstate['display-name'],
+		// 		},
+		// 	},
+		// });
+		const temp = axios.get('/user', { twitchUsername: userstate['display-name'] });
 		if (temp.twitchUsername) {
 			await temp.destroy();
 			await temp.save();
@@ -153,12 +143,14 @@ function precompileHP() {
 	}
 }
 
+function twitchAxios(axiosParam) {
+	axios = axiosParam;
+}
+
 function onConnectedHandler(addr, port) {
-	console.log(`* Connected to ${addr}:${port}`);
+	console.log(`* Twitch Client Connected to ${addr}:${port}`);
 }
 
 clientTwitch.on('connected', onConnectedHandler);
 
-clientTwitch.connect();
-
-export { clientTwitch, precompileHP };
+export { clientTwitch, precompileHP, twitchAxios };

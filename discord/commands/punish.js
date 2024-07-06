@@ -36,17 +36,21 @@ const punishData = new SlashCommandBuilder()
 		.setName('withdraw')
 		.setDescription('Withdraw from the Punishment Wheel'));
 
-punishData.execute = async (interaction) => {
+punishData.execute = async (interaction, axiosInst) => {
 	if (interaction.options.getSubcommand() === 'agree') {
-		let temp = await User.findOne({
-			where: {
-				discordUsername: {
-					[Op.eq]: interaction.user.username,
-				},
-			},
-		});
+		// TODO: change to use api
+		// let temp = await User.findOne({
+		// 	where: {
+		// 		discordUsername: {
+		// 			[Op.eq]: interaction.user.username,
+		// 		},
+		// 	},
+		// });
+		let temp = await axiosInst.get('/user/discordUsername/', { discordUsername: interaction.user.username });
 		if (!temp) {
-			temp = await User.build({ discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
+			// TODO: change to use api
+			// temp = await User.build({ discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
+			temp = await axiosInst.post('/user/new/', { discordUsername: interaction.user.username, twitchUsername: interaction.options.getString('TwitchUsername') });
 			await interaction.reply({ content: 'You are now signed up for punishment.', ephemeral: true });
 		}
 		else if (temp.discordUsername && temp.twitchUsername) {
@@ -61,15 +65,19 @@ punishData.execute = async (interaction) => {
 		await interaction.followUp({ content: 'Thank you for signing up for punishment.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'add') {
-		let temp = await Punishment.findOne({
-			where: {
-				name: {
-					[Op.eq]: interaction.options.getString('name'),
-				},
-			},
-		});
+		// TODO: change to use api
+		// let temp = await Punishment.findOne({
+		// 	where: {
+		// 		name: {
+		// 			[Op.eq]: interaction.options.getString('name'),
+		// 		},
+		// 	},
+		// });
+		let temp = await axiosInst.get('/punish/', { name: interaction.options.getString('name') });
 		if (!temp) {
-			temp = await Punishment.build({ name: interaction.options.getString('name'), description: interaction.options.getString('description') });
+			// TODO: change to use api
+			// temp = await Punishment.build({ name: interaction.options.getString('name'), description: interaction.options.getString('description') });
+			temp = await axiosInst.post('/punish/new/', { name: interaction.options.getString('name'), description: interaction.options.getString('description') });
 		}
 		else {
 			await interaction.reply({ content: 'That name already exists in our database. Please resubmit with a unique name.', ephemeral: true });
@@ -78,12 +86,15 @@ punishData.execute = async (interaction) => {
 		await interaction.followUp({ content: 'Your punishment has been added. For it to become active, other users must vote on your punishment to activate it.', ephemeral: true });
 	}
 	else if (interaction.options.getSubcommand() === 'view') {
-		const temp = await Punishment.findAll();
-		let punishments = 'Name---Description---Vote Count---Active\n';
-		temp.forEach((item) => {
+		// TODO: change to use api
+		// const temp = await Punishment.findAll();
+		const temp = axiosInst.get('/punish/all');
+		let punishments = '```Name---Description---Vote Count---Active\n';
+		temp.punishments.forEach((item) => {
 			const temp2 = `${item.name}---${item.description}---${item.voteCount}---${item.activeFlg}\n`;
 			punishments = punishments.concat(temp2);
 		});
+		punishments.concat('```');
 		const embed = new MessageEmbed()
 			.setColor('#0099ff')
 			.setDescription('List of submitted punishments.')
@@ -92,6 +103,8 @@ punishData.execute = async (interaction) => {
 		await interaction.reply({ embeds: [embed] });
 	}
 	else if (interaction.options.getSubcommand() === 'vote') {
+		// TODO: change to use api
+		// FIXME:
 		const temp = await Punishment.findAll();
 		console.log(temp);
 		if (temp.length > 0) {
@@ -120,6 +133,8 @@ punishData.execute = async (interaction) => {
 			const collector = interaction.channel.createMessageComponentCollector({ filter });
 
 			collector.on('collect', async (collected) => {
+				// TODO: change to use api
+				// FIXME:
 				const userVoteId = await User.findOne({
 					where: {
 						discordUsername: {
@@ -127,11 +142,11 @@ punishData.execute = async (interaction) => {
 						},
 					},
 				});
-				// console.log(collected);
-				// console.log(userVoteId.id);
 				collected.values.forEach(async (item) => {
 					try {
 						await collected.deferUpdate();
+						// TODO: change to use api
+						// FIXME:
 						const newVote = await Vote.build({ userId: userVoteId.id, punishmentId: item });
 						const punishId = await Punishment.findOne({
 							where: {
@@ -157,16 +172,21 @@ punishData.execute = async (interaction) => {
 		}
 	}
 	else if (interaction.options.getSubcommand() === 'withdraw') {
-		const userRemove = await User.findOne({
-			where: {
-				discordUsername: {
-					[Op.eq]: interaction.user.username,
-				},
-			},
-		});
-		await userRemove.destroy();
-		await userRemove.save();
-		await interaction.reply({ content: 'You have withdrawn from the punishment wheel.', ephemeral: true });
+		// TODO: change to use api
+		// const userRemove = await User.findOne({
+		// 	where: {
+		// 		discordUsername: {
+		// 			[Op.eq]: interaction.user.username,
+		// 		},
+		// 	},
+		// });
+		try {
+			await axiosInst.get('/user/delete/', { discordUsername: interaction.user.username });
+			await interaction.reply({ content: 'You have withdrawn from the punishment wheel.', ephemeral: true });
+		}
+		catch (err) {
+			await interaction.reply({ content: 'err', ephemeral: true });
+		}
 	}
 };
 

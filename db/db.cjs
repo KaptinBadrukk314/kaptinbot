@@ -22,10 +22,12 @@ async function dbConnect() {
 			discordUsername:{
 				type: DataTypes.STRING,
 				allowNull: false,
+				unique: true,
 			},
 			twitchUsername:{
 				type: DataTypes.STRING,
 				allowNull: true,
+				unique: true,
 				set(value) {
 					this.setDataValue('twitchUsername', value);
 				},
@@ -77,8 +79,8 @@ async function dbConnect() {
 				primaryKey: true,
 			},
 		}, { sequelize: db });
-		Vote.User = Vote.belongsTo(User);
-		Vote.Punishment = Vote.belongsTo(Punishment);
+		Vote.User = Vote.belongsTo(User, { allowNull: false });
+		Vote.Punishment = Vote.belongsTo(Punishment, { allowNull: false });
 		await db.sync();
 		await db.authenticate();
 		console.log('Connection has been established successfully to database.');
