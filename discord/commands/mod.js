@@ -7,8 +7,6 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import pkg from '../../db/db.cjs';
 const { Punishment } = pkg;
 
-
-
 const modData = new SlashCommandBuilder()
 	.setName('mod')
 	.setDescription('Moderator commands for moderating things.')
